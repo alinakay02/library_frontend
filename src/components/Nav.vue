@@ -73,13 +73,17 @@ export default {
 @media (max-width: 500px) {
   .pre-block {
     background-color: #eef3ff;
-    max-width: 50vw;
+    max-width: 49vw;
   }
   .nav-block, .top-btn {
     font-size: 10px;
   }
   .top-block {
-    min-width: 50vw;
+    min-width: 51vw;
+    background-color: #eef3ff;
+  }
+  .top-btn{
+    min-width: 17vw;
   }
 }
 
