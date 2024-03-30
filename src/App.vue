@@ -4,10 +4,7 @@
     <router-view></router-view>
   </div>
 
-  <footer class="custom-footer">
-<!--    <div style="background-color: #203156; height: 90px">
-    </div>-->
-  </footer>
+  <footer class="custom-footer"></footer>
 </template>
 
 <script>
@@ -23,9 +20,6 @@ export default {
     }
   },
   methods: {
-    updateActivity(value) {
-      this.activity = value;
-    }
   }
 }
 </script>

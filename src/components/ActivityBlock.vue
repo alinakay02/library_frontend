@@ -5,7 +5,7 @@ import '@material/web/checkbox/checkbox.js';
 </script>
 
 <template>
-<div style="display: flex; flex-wrap: wrap; justify-content: center;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 40px">
   <div class="activ-wrapper">
     <div class="image">
       <img src="../assets/эмблема.jpg" style="height: 10vw; width: 10vw; min-width: 100px; min-height: 100px">
@@ -43,6 +43,7 @@ import '@material/web/checkbox/checkbox.js';
 </template>
 
 <style scoped>
+@media
 .activ-wrapper {
   display: flex;
   margin: 20px 20px;
@@ -50,9 +51,8 @@ import '@material/web/checkbox/checkbox.js';
   border-radius: 8px;
   width: 40vw;
   max-width: 900px;
-  min-width: 600px;
+  min-width: 350px;
   transition: transform 0.3s ease-in-out;
-  //border: 1px solid #5c7d9d;
 }
 .activ-wrapper:hover {
   box-shadow: 1px 1px 4px #5c7d9d;

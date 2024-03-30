@@ -50,7 +50,7 @@ import '@material/web/checkbox/checkbox.js';
   border-radius: 8px;
   width: 40vw;
   max-width: 900px;
-  min-width: 600px;
+  min-width: 350px;
   transition: transform 0.3s ease-in-out;
 //border: 1px solid #5c7d9d;
 }

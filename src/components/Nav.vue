@@ -26,7 +26,7 @@ const switchlang = (lang) => {
         <div class="top-block">
           <button class="top-btn" @click="toggleDropdown()">{{ t('buttons.selectlang') }}</button>
           <ul v-show="isDropdownVisible" class="dropdown-list">
-            <li v-for="language in languages" :key="language" @click="switchlang(language); isDropdownVisible = false;">{{ language }}</li>
+            <li v-for="language in languages" :key="language" @click="switchlang(language); isDropdownVisible = false;" style="min-width: 70px">{{ language }}</li>
           </ul>
           <a href="#/login" class="top-btn">{{ t('buttons.login') }}</a>
           <a href="#/signup" class="top-btn">{{ t('buttons.registr') }}</a>
@@ -70,6 +70,19 @@ export default {
 </script>
 
 <style scoped>
+@media (max-width: 500px) {
+  .pre-block {
+    background-color: #eef3ff;
+    max-width: 50vw;
+  }
+  .nav-block, .top-btn {
+    font-size: 10px;
+  }
+  .top-block {
+    min-width: 50vw;
+  }
+}
+
 .dropdown-list {
   position: absolute;
   top: 100%;
@@ -82,18 +95,20 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   z-index: 10;
   width: 9vw;
+  min-width: 70px;
 }
 
 .dropdown-list li {
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 8px 0px;
+  z-index: 10;
 }
 .dropdown-list li:hover {
   background-color: #d2d7e5;
 }
 
 .navbar-top {
-  width: calc(100vw - 8px);
+  max-width: 100vw;
   display: flex;
   padding: 0;
   margin: 0;
@@ -131,7 +146,6 @@ export default {
 }
 .navbar {
   display: flex;
-  width: calc(100vw - 8px);
 
 }
 .nav-block {

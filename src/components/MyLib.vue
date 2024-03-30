@@ -88,6 +88,12 @@ export default {
 </script>
 
 <style scoped>
+@media (max-width: 500px) {
+ .profile {
+   min-width: 90vw;
+   padding: 20px 0!important;
+ }
+}
 .change-password-form input {
   height: 48px;
   border: none;
@@ -105,7 +111,7 @@ export default {
 }
 .profile {
   max-width: 70vw;
-  margin: 0 auto 0 50px;
+  margin: 0 auto 0 5vw;
   padding: 20px;
 }
 .user-profile {

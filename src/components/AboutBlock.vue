@@ -34,6 +34,7 @@ const { t, locale } = useI18n({useScope: 'global'});
 .about{
   padding: 40px;
   margin-bottom: 50px;
+  max-width: 100vw;
 }
 .article p {
   padding: 0;
