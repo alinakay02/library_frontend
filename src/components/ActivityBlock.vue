@@ -5,7 +5,7 @@ import '@material/web/checkbox/checkbox.js';
 </script>
 
 <template>
-<div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 40px">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; margin-top: 10px">
   <div class="activ-wrapper">
     <div class="image">
       <img src="../assets/эмблема.jpg" style="height: 10vw; width: 10vw; min-width: 100px; min-height: 100px">
@@ -43,7 +43,7 @@ import '@material/web/checkbox/checkbox.js';
 </template>
 
 <style scoped>
-@media
+
 .activ-wrapper {
   display: flex;
   margin: 20px 20px;

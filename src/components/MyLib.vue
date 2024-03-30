@@ -1,6 +1,5 @@
 <script setup>
 import {useI18n} from 'vue-i18n';
-
 const { t } = useI18n({useScope: 'global'});
 </script>
 
@@ -11,7 +10,7 @@ const { t } = useI18n({useScope: 'global'});
       <div class="profile-info">
         <img src="../assets/profile-icon.png" alt="Profile" class="profile-image">
         <div class="user-details">
-          <div>{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="users">{{ user.firstName }} {{ user.lastName }}</div>
           <p>Username: {{ user.username }}</p>
         </div>
       </div>
@@ -29,15 +28,15 @@ const { t } = useI18n({useScope: 'global'});
     </div>
     <div class="text">{{ t('profile.saved') }}</div>
     <div class="book-list">
-      <div v-for="book in savedBooks" :key="book.id" class="book">
-        <img src="../assets/book-icon.png" alt="Book" class="book-image">
-        <div class="book-details">
-          <p>{{ book.title }}</p>
-          <p>{{ book.author }}</p>
-        </div>
-        <button @click="deleteBook(book.id)" class="delete-button">
-          <img src="../assets/delete-icon.png" alt="Delete">
-        </button>
+        <div v-for="book in savedBooks" :key="book.id" class="book">
+          <img src="../assets/book-icon.png" alt="Book" class="book-image">
+          <div class="book-details">
+            <p>{{ book.title }}</p>
+            <p>{{ book.author }}</p>
+          </div>
+          <button @click="deleteBook(book.id)" class="delete-button">
+            <img src="../assets/delete-icon.png" alt="Delete">
+          </button>
       </div>
     </div>
     <div v-if="admin" class="admin-panel">
@@ -65,7 +64,10 @@ export default {
       savedBooks: [
         { id: 1, title: 'Book 1', author: 'Author 1' },
         { id: 2, title: 'Book 2', author: 'Author 2' },
-        { id: 3, title: 'Book 3', author: 'Author 3' }
+        { id: 3, title: 'Book 3', author: 'Author 3' },
+        { id: 4, title: 'Book 4', author: 'Author 4' },
+        { id: 5, title: 'Book 5', author: 'Author 5' },
+        { id: 6, title: 'Book 6', author: 'Author 6' }
       ],
       showChangePasswordForm: false,
       newPassword: '',
@@ -90,9 +92,30 @@ export default {
 <style scoped>
 @media (max-width: 500px) {
  .profile {
-   min-width: 90vw;
    padding: 20px 0!important;
+   margin-left: 20px!important;
+   font-size: 14px;
  }
+  .user-profile {
+    min-width: 90vw;
+  }
+  .book {
+    min-width: 80vw;
+  }
+  .profile-image {
+    max-width: 48px;
+    max-height: 48px;
+    margin-top: 8px;
+  }
+  .user-details {
+    margin-left: 10px!important;
+  }
+  .save-button {
+    padding: 10px!important;
+  }
+  .text {
+    font-size: 16px!important;
+  }
 }
 .change-password-form input {
   height: 48px;
@@ -103,6 +126,7 @@ export default {
   padding-left: 10px;
   background-color: transparent;
   transition: background-color 0.3s ease;
+  min-width: 300px;
 }
 .change-password-form input:hover,
 .change-password-form input:focus, .change-password-form input:active {
@@ -110,19 +134,21 @@ export default {
   border-bottom: solid #182542 0 0 1px 0;
 }
 .profile {
-  max-width: 70vw;
-  margin: 0 auto 0 5vw;
-  padding: 20px;
+  max-width: 90vw;
+  margin: 0 auto 0 40px;
+  padding: 20px 10px;
 }
 .user-profile {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
+  width: 50vw;
+  align-items: flex-start;
 }
 .profile-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  max-width: max-content;
 }
 .profile-image {
   width: 100px;
@@ -135,6 +161,7 @@ export default {
   flex-direction: column;
   text-align: left;
   margin-left: 40px;
+  margin-top: 10px;
 }
 .change-password-button {
   background-color: #9db9d3;
@@ -144,6 +171,7 @@ export default {
   height: 48px;
   padding: 10px 20px;
   cursor: pointer;
+  margin-top: 10px;
 }
 .change-password-form {
   margin-top: 20px;
@@ -166,7 +194,9 @@ export default {
 }
 .book-list {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  max-width: 90vw;
 }
 .book {
   display: flex;
@@ -176,6 +206,7 @@ export default {
   border-radius: 8px;
   padding: 4px;
   margin-bottom: 10px;
+  width: 43vw;
 }
 .book-details {
   flex-grow: 1;

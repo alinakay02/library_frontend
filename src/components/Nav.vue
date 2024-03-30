@@ -20,19 +20,23 @@ const switchlang = (lang) => {
 </script>
 <template>
   <div>
-    <div class="nav">
+    <div class="nav-str">
       <div class="navbar-top">
         <div class="pre-block"></div>
-        <div class="top-block">
-          <button class="top-btn" @click="toggleDropdown()">{{ t('buttons.selectlang') }}</button>
-          <ul v-show="isDropdownVisible" class="dropdown-list">
-            <li v-for="language in languages" :key="language" @click="switchlang(language); isDropdownVisible = false;" style="min-width: 70px">{{ language }}</li>
-          </ul>
+        <div class="top-block" >
+          <button class="lang top-btn " @click="toggleDropdown()">{{ t('buttons.selectlang') }}</button>
+            <ul v-if="isDropdownVisible"
+                class="dropdown-list"
+                @mouseover="showDropdown"
+                @mouseleave="hideDropdown"
+            >
+              <li v-for="language in languages" :key="language" @click="switchlang(language); isDropdownVisible = false;" style="min-width: 70px">{{ language }}</li>
+            </ul>
           <a href="#/login" class="top-btn">{{ t('buttons.login') }}</a>
           <a href="#/signup" class="top-btn">{{ t('buttons.registr') }}</a>
         </div>
       </div>
-      <div class="navbar">
+      <div class="navigate-block">
         <a href="#/about" class="nav-block">{{ t('blocks.about') }}</a>
         <a href="#/activity" class="nav-block">{{ t('blocks.activity') }}</a>
         <a href="#/news" class="nav-block">{{ t('blocks.news') }}</a>
@@ -46,7 +50,6 @@ const switchlang = (lang) => {
 <script>
 export default {
   name: 'NavPanel',
-
   data() {
     return {
       blocks: ['О библиотеке', 'Деятельность', 'Новости', 'Моя библиотека', 'Поиск'],
@@ -57,7 +60,8 @@ export default {
       mylib: false,
       search: false,
       languages: ['Русский', 'English', 'O\'zbek'],
-      isDropdownVisible: false
+      isDropdownVisible: false,
+      showLoginModal: false,
     }
   },
 
@@ -65,26 +69,42 @@ export default {
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
-  }
+    showDropdown() {
+      this.isDropdownVisible = true;
+    },
+    hideDropdown() {
+      this.isDropdownVisible = false;
+    },
+  },
+
+  mounted () {
+  },
 }
 </script>
 
-<style scoped>
+<style>
 @media (max-width: 500px) {
   .pre-block {
     background-color: #eef3ff;
-    max-width: 49vw;
+    max-width: 48vw;
   }
   .nav-block, .top-btn {
     font-size: 10px;
   }
   .top-block {
-    min-width: 51vw;
+    min-width: 52vw;
     background-color: #eef3ff;
   }
   .top-btn{
-    min-width: 17vw;
+    min-width: 16vw!important;
   }
+  .lang {
+    min-width: 20vw!important;
+  }
+  .dropdown-list {
+    min-width: 20vw!important;
+  }
+
 }
 
 .dropdown-list {
@@ -97,11 +117,11 @@ export default {
   background-color: #eef3ff;
   border: 0 1px 1px 1px solid #ccc;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 10;
+  z-index: 10000;
   width: 9vw;
   min-width: 70px;
+  outline: none;
 }
-
 .dropdown-list li {
   cursor: pointer;
   padding: 8px 0px;
@@ -110,7 +130,6 @@ export default {
 .dropdown-list li:hover {
   background-color: #d2d7e5;
 }
-
 .navbar-top {
   max-width: 100vw;
   display: flex;
@@ -142,15 +161,14 @@ export default {
 .top-btn:hover {
   background-color: #d2d7e5;
 }
-.nav {
+.nav-str {
   position: sticky;
   padding: 0;
   margin: 0;
   top: 0;
 }
-.navbar {
+.navigate-block {
   display: flex;
-
 }
 .nav-block {
   flex: 1;

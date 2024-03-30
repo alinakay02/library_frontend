@@ -27,5 +27,22 @@
   },
   "messages": {
     "notautorized": "Barcha xususiyatlarga kirish uchun tizimga kiring"
+  },
+  "login": {
+    "title": "Kirish",
+    "username": "Login",
+    "password": "Parol",
+    "notmem": "Ro'yxatdan o'tmaganmisiz?",
+    "registr": "Ro'yxatdan o'ting",
+    "title2": "Kirish"
+  },
+  "register": {
+    "fname": "Ism",
+    "lname": "Familiya",
+    "title": "Ro'yxatdan o'tish",
+    "username": "Login",
+    "password": "Parol",
+    "info": "Kamida 8 ta belgi va 1 ta raqam",
+    "title2": "Ro'yxatdan o'tish"
   }
 }

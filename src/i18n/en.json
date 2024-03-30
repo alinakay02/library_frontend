@@ -27,5 +27,22 @@
   },
   "messages": {
     "notautorized": "Log in to access all the features"
+  },
+  "login": {
+    "title": "Sign in",
+    "username": "Login",
+    "password": "Password",
+    "notmem": "Not a member?",
+    "registr": "Register now",
+    "title2": "Sign in"
+  },
+  "register": {
+    "fname": "First name",
+    "lname": "Last name",
+    "title": "Sign up",
+    "username": "Login",
+    "password": "Password",
+    "info": "At least 8 characters and 1 digit",
+    "title2": "Sign up"
   }
 }
