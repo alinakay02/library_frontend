@@ -28,16 +28,16 @@ const switchlang = (lang) => {
           <ul v-show="isDropdownVisible" class="dropdown-list">
             <li v-for="language in languages" :key="language" @click="switchlang(language); isDropdownVisible = false;">{{ language }}</li>
           </ul>
-          <button class="top-btn">{{ t('buttons.login') }}</button>
-          <button class="top-btn">{{ t('buttons.registr') }}</button>
+          <a href="#/login" class="top-btn">{{ t('buttons.login') }}</a>
+          <a href="#/signup" class="top-btn">{{ t('buttons.registr') }}</a>
         </div>
       </div>
       <div class="navbar">
-        <div :class="['nav-block']" @click="handleClick(t('blocks.about'))">{{ t('blocks.about')}}</div>
-        <div :class="['nav-block']" @click="handleClick(t('blocks.activity'))">{{ t('blocks.activity')}}</div>
-        <div :class="['nav-block']" @click="handleClick(t('blocks.news'))">{{ t('blocks.news')}}</div>
-        <div :class="['nav-block']" @click="handleClick(t('blocks.mylib'))">{{ t('blocks.mylib')}}</div>
-        <div :class="['nav-block']" @click="handleClick(t('blocks.search'))">{{ t('blocks.search')}}</div>
+        <a href="#/about" class="nav-block">{{ t('blocks.about') }}</a>
+        <a href="#/activity" class="nav-block">{{ t('blocks.activity') }}</a>
+        <a href="#/news" class="nav-block">{{ t('blocks.news') }}</a>
+        <a href="#/mylib" class="nav-block">{{ t('blocks.mylib') }}</a>
+        <a href="#/search" class="nav-block">{{ t('blocks.search') }}</a>
       </div>
     </div>
   </div>
@@ -62,34 +62,6 @@ export default {
   },
 
   methods: {
-    handleClick(block){
-      switch (block) {
-        case 'about':
-          this.about = true;
-          break;
-        case 'activity':
-          this.activity = true;
-          this.$emit('update-activity', this.activity);
-          console.log(this.activity);
-          break;
-        case 'news':
-          this.news = true;
-          break;
-        case 'mylib':
-          this.mylib = true;
-          break;
-        case 'search':
-          this.search = true;
-          break;
-        default:
-          this.about = false;
-          this.activity = false;
-          this.news = false;
-          this.mylib = false;
-          this.search = false;
-          break;
-      }
-    },
     toggleDropdown() {
       this.isDropdownVisible = !this.isDropdownVisible;
     },
@@ -146,6 +118,7 @@ export default {
   min-width: fit-content;
   width: 9vw;
   background-color: #eef3ff;
+  text-decoration: none;
 }
 .top-btn:hover {
   background-color: #d2d7e5;
@@ -171,6 +144,7 @@ export default {
   background-color: #203156;
   cursor: pointer;
   transition: background-color 0.3s;
+  text-decoration: none;
 }
 .nav-block:hover {
   background-color: #436591;

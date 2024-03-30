@@ -1,26 +1,21 @@
 <template>
-  <NavPanel class="NavPanel" />
-  <AboutBlock/>
-  <div v-if="activity">
-    <ActivityBlock/>
+  <div class="main-content">
+    <NavPanel class="NavPanel" />
+    <router-view></router-view>
   </div>
 
-  <footer>
-    <div style="background-color: #203156; height: 90px">
-    </div>
+  <footer class="custom-footer">
+<!--    <div style="background-color: #203156; height: 90px">
+    </div>-->
   </footer>
 </template>
 
 <script>
 import NavPanel from './components/Nav.vue'
-import AboutBlock from './components/AboutBlock.vue'
-import ActivityBlock from "@/components/ActivityBlock.vue";
 export default {
   name: 'App',
   components: {
-    ActivityBlock,
     NavPanel,
-    AboutBlock
   },
   data() {
     return {
@@ -67,5 +62,14 @@ body {
 .NavPanel {
   position: sticky;
   top: 0;
+}
+.main-content {
+  min-height: calc(100vh - 90px);
+}
+.custom-footer {
+  position: relative;
+  bottom: 0;
+  background-color: #203156;
+  height: 90px;
 }
 </style>
