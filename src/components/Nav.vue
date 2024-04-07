@@ -24,7 +24,12 @@ const switchlang = (lang) => {
       <div class="navbar-top">
         <div class="pre-block"></div>
         <div class="top-block" >
-          <button class="lang top-btn " @click="toggleDropdown()">{{ t('buttons.selectlang') }}</button>
+          <button class="lang top-btn " @click="toggleDropdown()">
+<!--            {{ t('buttons.selectlang') }}-->
+            <img src="../assets/en.png" alt="" title="English" style="height: 24px; width: 24px; margin-right: 10px">
+            <img src="../assets/ru.png" alt="" title="Русский" style="height: 24px; width: 24px; margin-right: 10px">
+            <img src="../assets/uz.png" alt="" title="O'zbek" style="height: 24px; width: 24px">
+          </button>
             <ul v-if="isDropdownVisible"
                 class="dropdown-list"
                 @mouseover="showDropdown"
