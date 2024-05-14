@@ -20,19 +20,19 @@
 
   <div v-if="searchResults !== null">
     <p v-if="searchResults.length > 0">Результаты поиска:</p>
-<!--    <ul v-if="searchResults.length > 0">
-      <li v-for="book in searchResults" :key="book.id">
-        <strong>{{ book.title }}</strong> - {{ book.authors.join(', ') }} ({{ book.genre }})
-      </li>
-    </ul>-->
-
     <div v-if="searchResults.length > 0" class="books-list">
       <div v-for="book in searchResults" :key="book.id" class="book">
-        <img src="../assets/book-icon.png" alt="Book" class="book-image">
+        <img src="../assets/book-icon.png" alt="Book" class="book-image" @click="openPdf(book.pdfUrl)">
         <div class="book-details">
-          <p>{{ book.title }}</p>
-          <p>{{ book.authors.join(', ') }}</p>
-          <p>{{ book.genre }}</p>
+          <p style="padding-bottom: 12px">{{ book.title }}</p>
+          <p v-if="Array.isArray(book.author)">
+            <span v-for="(author, index) in book.author" :key="index">
+              {{ author.firstname }} {{ author.patronymic }} {{ author.lastname }} <br>
+            </span>
+          </p>
+          <p v-else>
+            {{ book.author.firstname }} {{ book.author.patronymic }} {{ book.author.lastname }}
+          </p>
         </div>
         <div class="status">
           <button @click="bookedBook(book.id)" >
@@ -43,6 +43,10 @@
           </button>
           <button @click="readBook(book.id)" >
             <img src="../assets/read-icon.png" alt="" title="Чтение книги" style="height: 44px; width: 44px">
+          </button>
+          <!-- Кнопка удаления, видимая только для администраторов -->
+          <button v-if="isAdmin" @click="deleteBook(book.id)" class="delete-button">
+            <img src="../assets/delete-icon.png" alt="Delete">
           </button>
         </div>
       </div>
@@ -63,22 +67,87 @@ export default {
       authorQuery: '',
       titleQuery: '',
       genreQuery: '',
-      booksData: null,
-
+      searchResults: [], // Результаты поиска
+      isAdmin: true,
+      booksData: [
+        {
+          id: 1,
+          title: 'Мастер и Маргарита',
+          author: { firstname: 'Михаил', patronymic: 'Афанасьевич', lastname: 'Булгаков' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Художественная литература'
+        },
+        {
+          id: 2,
+          title: 'Война и мир',
+          author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Художественная литература'
+        },
+        {
+          id: 3,
+          title: 'Преступление и наказание',
+          author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Художественная литература'
+        },
+        {
+          id: 4,
+          title: 'Братья Карамазовы',
+          author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Художественная литература'
+        },
+        {
+          id: 5,
+          title: 'Анна Каренина',
+          author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Художественная литература'
+        },
+        {
+          id: 6,
+          title: 'Автоматизированные библиотечно-информационные системы России: состояние, выбор, внедрение и развитие',
+          author: [
+          { firstname: 'Яков', patronymic: 'Леонидович', lastname: 'Шрайберг' },
+          { firstname: 'Феликс', patronymic: 'Семёнович', lastname: 'Воройский' }],
+            pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          genre: 'Документоведение'
+        }
+      ]
     };
   },
   computed: {
-    searchResults() {
-      if (!this.booksData) return null;
+  },
+  methods: {
+    searchBooks() {
+      if (!this.authorQuery.trim() && !this.titleQuery.trim() && !this.genreQuery.trim()) {
+        this.searchResults = [];
+        return;
+      }
 
       let filteredBooks = this.booksData;
+
       if (this.authorQuery.trim() !== '') {
-        filteredBooks = filteredBooks.filter(book =>
-            book.authors.some(author =>
-                author.toLowerCase().includes(this.authorQuery.toLowerCase())
-            )
-        );
+        const authorQuery = this.authorQuery.toLowerCase();
+        filteredBooks = filteredBooks.filter(book => {
+          if (Array.isArray(book.author)) {
+            return book.author.some(author =>
+                author.firstname.toLowerCase().includes(authorQuery) ||
+                author.lastname.toLowerCase().includes(authorQuery) ||
+                author.patronymic.toLowerCase().includes(authorQuery)
+            );
+          } else {
+            return (
+                book.author.firstname.toLowerCase().includes(authorQuery) ||
+                book.author.lastname.toLowerCase().includes(authorQuery) ||
+                book.author.patronymic.toLowerCase().includes(authorQuery)
+            );
+          }
+        });
       }
+
+
       if (this.titleQuery.trim() !== '') {
         filteredBooks = filteredBooks.filter(book =>
             book.title.toLowerCase().includes(this.titleQuery.toLowerCase())
@@ -86,26 +155,10 @@ export default {
       }
       if (this.genreQuery.trim() !== '') {
         filteredBooks = filteredBooks.filter(book =>
-            book.genre.toLowerCase().includes(this.genreQuery.toLowerCase())
+            book.genre && book.genre.toLowerCase().includes(this.genreQuery.toLowerCase())
         );
       }
-      return filteredBooks;
-    }
-  },
-  methods: {
-    searchBooks() {
-      // Здесь можно отправить запрос на сервер для поиска книг
-      console.log('Выполняется поиск книг по запросу:', {
-        authorQuery: this.authorQuery,
-        titleQuery: this.titleQuery,
-        genreQuery: this.genreQuery
-      });
-      this.booksData = [
-        { id: 1, title: 'Book 1', authors: ['Author 1'], genre: 'Genre 1' },
-        { id: 2, title: 'Book 2', authors: ['Author 2'], genre: 'Genre 2' },
-        { id: 3, title: 'Book 3', authors: ['Author 3'], genre: 'Genre 3' },
-        // Здесь можно добавить другие книги
-      ]
+      this.searchResults = filteredBooks;
     },
     saveBook() {
 
@@ -113,8 +166,35 @@ export default {
     bookedBook() {
 
     },
-    readBook() {
-
+    readBook(bookId) {
+      const book = this.booksData.find(b => b.id === bookId);
+      if (book && book.pdfUrl) {
+        window.open(book.pdfUrl, '_blank');
+      } else {
+        console.error('Book URL not found!');
+      }
+    },
+    // Удаление книги администратором
+    deleteBook(bookId) {
+      if (!this.isAdmin) {
+        alert('Вы не имеете права администратора для выполнения этой операции!');
+        return;
+      }
+      // Подтверждение удаления
+      if (confirm('Вы уверены, что хотите удалить эту книгу?')) {
+        const index = this.booksData.findIndex(book => book.id === bookId);
+        if (index !== -1) {
+          this.booksData.splice(index, 1);
+        }
+        else {
+          alert('Книга не найдена');
+        }
+        // Находим и удаляем книгу из массива результатов поиска searchResults
+        const indexInSearchResults = this.searchResults.findIndex(book => book.id === bookId);
+        if (indexInSearchResults !== -1) {
+          this.searchResults.splice(indexInSearchResults, 1);
+        }
+      }
     },
   }
 }
@@ -176,6 +256,7 @@ export default {
   padding: 8px 16px 8px 0;
   margin-bottom: 10px;
   width: 43vw;
+  min-width: 330px;
   img {
     width: 36px;
     height: 36px;

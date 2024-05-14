@@ -91,7 +91,7 @@ export default {
 @media (max-width: 500px) {
   .pre-block {
     background-color: #eef3ff;
-    max-width: 48vw;
+    max-width: 43vw;
   }
   .nav-block, .top-btn {
     font-size: 10px;
@@ -104,7 +104,7 @@ export default {
     min-width: 16vw!important;
   }
   .lang {
-    min-width: 20vw!important;
+    min-width: 25vw!important;
   }
   .dropdown-list {
     min-width: 20vw!important;

@@ -11,7 +11,7 @@ const { t } = useI18n({useScope: 'global'});
         <img src="../assets/profile-icon.png" alt="Profile" class="profile-image">
         <div class="user-details">
           <div class="users">{{ user.firstName }} {{ user.lastName }}</div>
-          <p>Username: {{ user.username }}</p>
+          <p>Логин: {{ user.username }}</p>
         </div>
       </div>
       <button class="change-password-button" @click="showChangePasswordForm = !showChangePasswordForm">
@@ -26,21 +26,34 @@ const { t } = useI18n({useScope: 'global'});
         <button @click="savePassword" class="save-button">{{ t('profile.saveButton') }}</button>
       </div>
     </div>
-    <div class="text">{{ t('profile.saved') }}</div>
-    <div class="book-list">
-      <div v-for="book in savedBooks" :key="book.id" class="book">
-        <img src="../assets/book-icon.png" alt="Book" class="book-image">
-        <div class="book-details">
-          <p>{{ book.title }}</p>
-          <p>{{ book.author }}</p>
+    <div v-if="!admin" class="text">{{ t('profile.saved') }}</div>
+    <div v-if="!admin" class="book-list">
+        <div v-for="book in savedBooks" :key="book.id" class="book">
+          <img src="../assets/book-icon.png" alt="Book" class="book-image">
+          <div class="book-details">
+            <p style="padding-bottom: 12px; font-weight: bold">{{ book.title }}</p>
+            <p v-if="Array.isArray(book.author)">
+            <span v-for="(author, index) in book.author" :key="index">
+              {{ author.firstname }} {{ author.patronymic }} {{ author.lastname }} <br>
+            </span>
+            </p>
+            <p v-else>
+              {{ book.author.firstname }} {{ book.author.patronymic }} {{ book.author.lastname }}
+            </p>
+          </div>
+          <button @click="deleteBook(book.id)" class="delete-button">
+            <img src="../assets/delete-icon.png" alt="Delete">
+          </button>
+          <button @click="bookedBook(book.id)" >
+            <img src="../assets/booked-icon.png" alt="" title="Забронировать книгу">
+          </button>
+          <button @click="readBook(book.id)" >
+            <img src="../assets/read-icon.png" alt="" title="Чтение книги" style="height: 44px; width: 44px">
+          </button>
         </div>
-        <button @click="deleteBook(book.id)" class="delete-button">
-          <img src="../assets/delete-icon.png" alt="Delete">
-        </button>
-      </div>
     </div>
-    <div class="text">Забронированные книги</div>
-    <div class="booked-list">
+    <div v-if="!admin" class="text">Забронированные книги</div>
+    <div v-if="!admin" class="booked-list">
       <div v-for="book in reservedBooks" :key="book.id" class="book">
         <img src="../assets/book-icon.png" alt="Book" class="book-image">
         <div class="book-details">
@@ -51,130 +64,7 @@ const { t } = useI18n({useScope: 'global'});
       </div>
     </div>
 
-
-    <div v-if="admin" class="admin-panel">
-      <p style="font-weight: bold; font-size: 1.2rem; padding-left: 20px">Панель администратора</p>
-      <div class="section event news">
-        <p style="font-weight: bold">Управление новостями</p>
-
-        <p>Добавление новости</p>
-        <form @submit.prevent="submitFormNews">
-          <label for="title">Заголовок:</label><br>
-          <input type="text" id="title" v-model="newNews.title" required class="input-group-text" style="width: 500px; overflow-x: auto!important;"><br>
-
-          <label for="content">Текст новости:</label><br>
-          <textarea id="content" v-model="newNews.text" style="height: 350px; width: 500px; resize: none"></textarea><br>
-
-          <label for="date">Дата:</label><br>
-          <input type="date" id="date" v-model="newNews.date" class="input-group-text" required><br>
-
-          <label for="photo">Фото:</label><br>
-          <input type="file" id="photo" accept="image/*" @change="handleFileChange" class=""><br>
-
-          <button type="submit" class="button" style="margin-top: 12px">Добавить новость</button>
-        </form>
-
-        <p>Отображение новостей</p>
-        <!-- Добавленные поля для выбора диапазона дат -->
-        <div class="data-container">
-          <label for="startDate" style="font-size: 0.9rem">Начальная дата:</label>
-          <input type="date" id="startDate" v-model="startDateNews">
-          <label for="endDate" style="font-size: 0.9rem">Конечная дата:</label>
-          <input type="date" id="endDate" v-model="endDateNews">
-        </div>
-
-        <div v-for="(item, index) in filteredNews" :key="index" class="list-item">
-          <span>{{ item.title }}</span>
-          <br>
-          <span class="event-text">{{ item.text }}</span>
-          <br>
-          <button class="button action-button" @click="editNewsEvent(index)">Редактировать</button>
-          <button class="button action-button delete" @click="deleteNewsEvent(index)">Удалить</button>
-        </div>
-      </div>
-
-      <div class="section event">
-        <p style="font-weight: bold">Управление мероприятиями</p>
-
-        <p>Добавление мероприятия</p>
-        <form @submit.prevent="submitFormEvents">
-          <label for="title">Заголовок:</label><br>
-          <input type="text" id="title" v-model="newEvent.title" class="input-group-text" required style="width: 500px; overflow-x: auto"><br>
-
-          <label for="content">Текст мероприятия:</label><br>
-          <textarea id="content" v-model="newEvent.text" required style="height: 350px; width: 500px; resize: none"></textarea><br>
-
-          <label for="date">Дата:</label><br>
-          <input type="date" id="date" v-model="newEvent.date" class="input-group-text" required><br>
-
-          <label for="photo">Фото:</label><br>
-          <input type="file" id="photo" accept="image/*" @change="handleFileChange" class="input-photo"><br>
-
-          <button type="submit" class="button" style="margin-top: 12px">Добавить мероприятие</button>
-        </form>
-
-        <!-- Добавленные поля для выбора диапазона дат -->
-        <p>Отображение мероприятий</p>
-        <div class="data-container">
-          <label for="startDate" style="font-size: 0.9rem">Начальная дата:</label>
-          <input type="date" id="startDate" v-model="startDateEvents">
-          <label for="endDate" style="font-size: 0.9rem">Конечная дата:</label>
-          <input type="date" id="endDate" v-model="endDateEvents">
-        </div>
-
-        <div v-for="(item, index) in filteredEvents" :key="index" class="list-item">
-          <span>{{ item.title }}</span>
-          <br>
-          <span class="event-text">{{ item.text }}</span>
-          <br>
-          <button class="button action-button" @click="editNewsEvent(index)">Редактировать</button>
-          <button class="button action-button delete" @click="deleteNewsEvent(index)">Удалить</button>
-        </div>
-      </div>
-      <div class="section2">
-        <p style="font-weight: bold">Управление книгами</p>
-
-        <form @submit.prevent="FormBookAdd">
-          <label for="book_title" >Наименование книги:</label><br>
-          <input type="text" v-model="bookTitle" style="width: 400px;" required><br>
-
-          <label>Количество авторов:</label><br>
-          <input type="number" v-model="authorCount" min="1" required><br>
-
-          <div v-for="index in authorCount" :key="index" style="display: inline-block; padding: 8px 8px 0px 0">
-            <label>Автор {{ index }}:</label><br>
-            <input type="text" v-model="authors[index-1].firstname" placeholder="Имя" style="width: 300px; margin-bottom: 8px" required><br>
-            <input type="text" v-model="authors[index-1].lastname" placeholder="Фамилия" style="width: 300px; margin-bottom: 8px" required><br>
-            <input type="text" v-model="authors[index-1].patronymic" placeholder="Отчество" style="width: 300px; margin-bottom: 8px" ><br>
-          </div><br>
-
-          <label>Количество жанров:</label><br>
-          <input type="number" v-model="genreCount" min="1" required><br>
-
-          <div v-for="index in genreCount" :key="index" style="display: inline-block; padding: 8px 8px 8px 0">
-            <label>Жанр {{ index }}:</label><br>
-            <input type="text" v-model="genres[index-1]" required><br>
-          </div><br>
-
-          <input type="submit" value="Добавить книгу" class="button" style="margin-bottom: 24px; padding: 8px 16px; border-radius: 8px">
-        </form>
-
-      </div>
-
-      <div class="section">
-        <p style="font-weight: bold">Обработка заявок на бронирование</p>
-        <div v-for="(request, index) in bookingRequests" :key="index" class="booking-request">
-          <p>{{ request.surname }} {{ request.name }} подал заявку на бронирование книги "{{ request.book }}"</p>
-          <button class="button action-button" @click="approveRequest(index)">Одобрить</button>
-          <button class="button action-button delete" @click="rejectRequest(index)">Отклонить</button>
-        </div>
-      </div>
-      <div class="section">
-        <p style="font-weight: bold">Просмотр статистики</p>
-        <p class="statistics">Общее количество пользователей: {{ totalUsers }}</p>
-        <p class="statistics">Количество заявок за текущий год: {{ requestsCount }}</p>
-      </div>
-    </div>
+    <AdminPanel v-if="admin" />
   </div>
 
   <div v-else class="not-authorized">
@@ -185,26 +75,65 @@ const { t } = useI18n({useScope: 'global'});
 </template>
 
 <script>
+import AdminPanel from './AdminPanel.vue'; // Импорт компонента админ-панели
+
 export default {
+  name: "PdfViewer",
+  props: { docPath: String },
+  components: {
+    AdminPanel // Регистрация компонента админ-панели
+  },
   data() {
     return {
       user: {
-        firstName: 'Имя',
-        lastName: 'Фамилия',
-        username: 'johndoe'
+        firstName: 'Алина',
+        lastName: 'Каюмова',
+        username: 'username'
       },
       savedBooks: [
-        { id: 1, title: 'Book 1', author: 'Author 1' },
-        { id: 2, title: 'Book 2', author: 'Author 2' },
-        { id: 3, title: 'Book 3', author: 'Author 3' },
-        { id: 4, title: 'Book 4', author: 'Author 4' },
-        { id: 5, title: 'Book 5', author: 'Author 5' },
-        { id: 6, title: 'Book 6', author: 'Author 6' }
+        {
+          id: 1,
+          title: 'Мастер и Маргарита',
+          author: { firstname: 'Михаил', patronymic: 'Афанасьевич', lastname: 'Булгаков' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        },
+        {
+          id: 2,
+          title: 'Война и мир',
+          author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        },
+        {
+          id: 3,
+          title: 'Преступление и наказание',
+          author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        },
+        {
+          id: 4,
+          title: 'Братья Карамазовы',
+          author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        },
+        {
+          id: 5,
+          title: 'Анна Каренина',
+          author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        },
+        {
+          id: 6,
+          title: 'Автоматизированные библиотечно-информационные системы России: состояние, выбор, внедрение и развитие',
+          author: [
+            { firstname: 'Яков', patronymic: 'Леонидович', lastname: 'Шрайберг' },
+            { firstname: 'Феликс', patronymic: 'Семёнович', lastname: 'Воройский' }],
+          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+        }
       ],
       showChangePasswordForm: false,
       newPassword: '',
       repeatPassword: '',
-      admin: true, // роль пользователя
+      admin: false, // роль пользователя
       authorized: true, // признак что пользователь авторизовался
 
       // для админа
@@ -259,64 +188,29 @@ export default {
 
       // забронированные книги
       reservedBooks: [
-        { id: 1, title: 'Книга 1', authors: ['Автор 1', 'Автор 2'], status: 'Забронировано' },
-        { id: 2, title: 'Книга 2', authors: ['Автор 3', 'Автор 4'], status: 'Забронировано' }
-      ],
+        { id: 1,
+          title: 'Анна Каренина',
+          authors: ['Лев Николаевич Толстой'],
+          status: 'Забронировано'
+        },
+        { id: 2,
+          title: 'Автоматизированные библиотечно-информационные системы России: состояние, выбор, внедрение и развитие',
+          authors: ['Яков Леонидович Шрайберг', 'Феликс Семёнович Воройский'],
+          status: 'Забронировано'
+        }
+      ]
+
     };
   },
   mounted() {
 
   },
   computed: {
-    // Фильтруем новости по выбранному диапазону дат
-    filteredNews() {
-      return this.news.filter(item => {
-        const itemDate = new Date(item.date);
-        const start = this.startDateNews ? new Date(this.startDateNews) : null;
-        const end = this.endDateNews ? new Date(this.endDateNews) : null;
-        // Если дата начала не выбрана, фильтруем только по дате конца
-        if (!start && end) {
-          return itemDate <= end;
-        }
-        // Если дата конца не выбрана, фильтруем только по дате начала
-        if (start && !end) {
-          return itemDate >= start;
-        }
-        // Если выбраны обе даты, фильтруем по диапазону
-        return itemDate >= start && itemDate <= end;
-      });
-    },
-    // Фильтруем мероприятия по выбранному диапазону дат
-    filteredEvents() {
-      return this.Events.filter(item => {
-        const itemDate = new Date(item.date);
-        const start = this.startDateEvents ? new Date(this.startDateEvents) : null;
-        const end = this.endDateEvents ? new Date(this.endDateEvents) : null;
-        // Если дата начала не выбрана, фильтруем только по дате конца
-        if (!start && end) {
-          return itemDate <= end;
-        }
-        // Если дата конца не выбрана, фильтруем только по дате начала
-        if (start && !end) {
-          return itemDate >= start;
-        }
-        // Если выбраны обе даты, фильтруем по диапазону
-        return itemDate >= start && itemDate <= end;
-      });
-    },
 
   },
 
   watch: {
-    authorCount(newVal, oldVal) {
-      if (newVal > oldVal) {
-        for (let i = oldVal; i < newVal; i++) {
-          this.authors.push({ firstname: '', lastname: '', patronymic: '' });
-        }
-      } else {
-        this.authors.splice(newVal);
-      }
-    }
+
   },
 
   methods: {
@@ -328,91 +222,17 @@ export default {
     deleteBook(id) {
       this.savedBooks = this.savedBooks.filter(book => book.id !== id);
     },
-    // Методы для управления новостями и мероприятиями
-    createNewsEvent() {
-      // Логика создания новости/мероприятия
-    },
-    editNewsEvent(index) {
-      // Логика редактирования новости/мероприятия
-    },
-    deleteNewsEvent(index) {
-      // Логика удаления новости/мероприятия
-    },
-    // Методы для управления книгами
-    addBook() {
-      // Логика добавления книги
-    },
-    // Методы для обработки заявок
-    approveRequest(index) {
-      // Логика одобрения заявки
-      this.bookingRequests.splice(index, 1); // Удаляем одобренную заявку из списка
-    },
-    rejectRequest(index) {
-      // Логика отклонения заявки
-      this.bookingRequests.splice(index, 1); // Удаляем отклоненную заявку из списка
-    },
+    bookedBook() {
 
-    // добавление фото для новости
-    handleFileChange(event) {
-      this.news.photo = event.target.files[0];
     },
-
-    FormBookAdd() {
-      // Здесь можно отправить данные формы на сервер
-      console.log('Отправка данных на сервер:', {
-        bookTitle: this.bookTitle,
-        authors: this.authors,
-        genres: this.genres
-      });
-    },
-
-    async submitFormNews() {
-      try {
-        const formData = new FormData();
-        formData.append('title', this.news.title);
-        formData.append('content', this.news.text);
-        formData.append('date', this.news.date);
-        formData.append('photo', this.news.photo);
-
-        const response = await fetch('url/to/your/api', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (response.ok) {
-          // Дополнительные действия при успешной отправке
-          console.log('Новость успешно добавлена!');
-        } else {
-          console.error('Ошибка при отправке данных на сервер');
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
+    readBook(bookId) {
+      const book = this.savedBooks.find(b => b.id === bookId);
+      if (book && book.pdfUrl) {
+        window.open(book.pdfUrl, '_blank');
+      } else {
+        console.error('Book URL not found!');
       }
     },
-
-    async submitFormEvents() {
-      try {
-        const formData = new FormData();
-        formData.append('title', this.news.title);
-        formData.append('content', this.news.text);
-        formData.append('date', this.news.date);
-        formData.append('photo', this.news.photo);
-
-        const response = await fetch('url/to/your/api', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (response.ok) {
-          // Дополнительные действия при успешной отправке
-          console.log('Новость успешно добавлена!');
-        } else {
-          console.error('Ошибка при отправке данных на сервер');
-        }
-      } catch (error) {
-        console.error('Ошибка:', error);
-      }
-    }
   }
 };
 </script>
@@ -428,7 +248,7 @@ export default {
     min-width: 90vw;
   }
   .book {
-    min-width: 80vw;
+    min-width: 86vw;
   }
   .profile-image {
     max-width: 48px;
@@ -529,6 +349,7 @@ export default {
   justify-content: space-between;
   flex-wrap: wrap;
   max-width: 90vw;
+  align-items: start;
   p {
     margin: 0;
   }
@@ -542,6 +363,15 @@ export default {
   padding: 8px 16px 8px 0;
   margin-bottom: 10px;
   width: 43vw;
+  max-height: max-content!important;
+  img {
+    width: 36px;
+    height: 36px;
+  }
+  button {
+    background-color: #EAF1FB;
+    border: none;
+  }
 }
 .book-details {
   flex-grow: 1;
@@ -555,7 +385,6 @@ export default {
   background-color: transparent;
   border: none;
   cursor: pointer;
-  margin-right: 20px;
 }
 .delete-button img {
   width: 20px;
@@ -572,118 +401,5 @@ export default {
   font-weight: bold;
   font-size: 20px;
 }
-.admin-panel {
-  text-align: left;
-}
-.section {
-  margin-bottom: 20px;
-  max-width: 800px;
-  border: #aebccb 1px solid;
-  border-radius: 8px;
-  padding: 10px;
-}
-.section p {
-  color: #182542;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-.button {
-  background-color: #9db9d3;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 4px 16px;
-  margin-bottom: 10px;
-  cursor: pointer;
-}
-.button:hover {
-  background-color: #182542;
-  color: white;
-}
-.list-item {
-  margin-bottom: 10px;
-  align-items: flex-start;
-}
-.event-text {
-  color: #182542;
-  font-size: 0.8rem;
-}
-.action-button {
-  background-color: #9dd3b6;
-  margin-left: 32px;
-}
-.action-button.delete {
-  background-color: #ffadad;
-}
-.action-button:hover {
-  background-color: #3b805b;
-  color: white;
-}
-.action-button.delete:hover {
-  background-color: #e13535;
-  color: white;
-}
-.booking-request {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  margin-top: 8px;
-}
-.booking-request p{
-  font-size: 1rem;
-}
-p.statistics {
-  font-size: 1rem;
-  margin-top: 20px;
-}
-.data-container {
-  #startDate {
-    margin: 0 10px;
-    background-color: #f6f9ff;
-    border-radius: 0px;
-    border: none;
-    padding: 2px 4px;
-  }
-  #endDate {
-    margin: 0 10px;
-    background-color: #f6f9ff;
-    border-radius: 0px;
-    border: none;
-    padding: 2px 4px;
-  }
-}
 
-.event {
-  display: inline-block;
-  width: 624px;
-  max-width: 700px;
-}
-.event.news {
-  margin-right: 36px;
-}
-.section2 {
-  max-width: 90vw;
-}
-.section2 {
-  input {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px 8px;
-  }
-  label {
-    font-size: 0.9rem;
-  }
-}
-
-.booked-list {
-  text-align: left;
-}
-.status {
-  padding: 0 16px;
-}
-.booked-list {
-  p {
-    margin: 0;
-  }
-}
 </style>

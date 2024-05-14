@@ -4,15 +4,17 @@
     <router-view></router-view>
   </div>
 
-  <footer class="custom-footer"></footer>
+  <footer class="custom-footer"><FooterComponent></FooterComponent></footer>
 </template>
 
 <script>
 import NavPanel from './components/Nav.vue'
+import FooterComponent from './components/FooterComponent.vue'
 export default {
   name: 'App',
   components: {
     NavPanel,
+    FooterComponent
   },
   data() {
     return {
@@ -31,6 +33,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  background-color: #f9fcff;
 }
 ::-webkit-scrollbar {
   width: 8px;
@@ -58,12 +61,10 @@ body {
   top: 0;
 }
 .main-content {
-  min-height: calc(100vh - 90px);
+  min-height: calc(100vh - 130px);
 }
 .custom-footer {
   position: relative;
   bottom: 0;
-  background-color: #203156;
-  height: 90px;
 }
 </style>
