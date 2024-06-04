@@ -6,125 +6,193 @@ const { t } = useI18n({useScope: 'global'});
 <template>
   <div class="admin-panel">
     <p style="font-weight: bold; font-size: 1.2rem; padding-left: 20px">Панель администратора</p>
-    <div class="section event news">
-      <p style="font-weight: bold">Управление новостями</p>
-
-      <p>Добавление новости</p>
-      <form @submit.prevent="submitFormNews">
-        <label for="title">Заголовок:</label><br>
-        <input type="text" id="title" v-model="newNews.title" required class="input-group-text" style="width: 500px; overflow-x: auto!important;"><br>
-
-        <label for="content">Текст новости:</label><br>
-        <textarea id="content" v-model="newNews.text" style="height: 200px; width: 500px; resize: none"></textarea><br>
-
-        <label for="date">Дата:</label><br>
-        <input type="date" id="date" v-model="newNews.date" class="input-group-text" required><br>
-
-        <label for="photo">Фото:</label><br>
-        <input type="file" id="photo" accept="image/*" @change="handleFileChange" class=""><br>
-
-        <button type="submit" class="button" style="margin-top: 12px">Добавить новость</button>
-      </form>
-
-      <p>Отображение новостей</p>
-      <!-- Добавленные поля для выбора диапазона дат -->
-      <div class="data-container">
-        <label for="startDate" style="font-size: 0.9rem">Начальная дата:</label>
-        <input type="date" id="startDate" v-model="startDateNews">
-        <label for="endDate" style="font-size: 0.9rem">Конечная дата:</label>
-        <input type="date" id="endDate" v-model="endDateNews">
-      </div>
-
-      <div v-for="(item, index) in filteredNews" :key="index" class="list-item">
-        <span>{{ item.title }}</span>
-        <br>
-        <span class="event-text">{{ item.text }}</span>
-        <br>
-        <button class="button action-button" @click="editNewsEvent(index)">Редактировать</button>
-        <button class="button action-button delete" @click="deleteNewsEvent(index)">Удалить</button>
-      </div>
-    </div>
-
-    <div class="section event">
-      <p style="font-weight: bold">Управление мероприятиями</p>
-
-      <p>Добавление мероприятия</p>
-      <form @submit.prevent="submitFormEvents">
-        <label for="title">Заголовок:</label><br>
-        <input type="text" id="title" v-model="newEvent.title" class="input-group-text" required style="width: 500px; overflow-x: auto"><br>
-
-        <label for="content">Текст мероприятия:</label><br>
-        <textarea id="content" v-model="newEvent.text" required style="height: 200px; width: 500px; resize: none"></textarea><br>
-
-        <label for="date">Дата:</label><br>
-        <input type="date" id="date" v-model="newEvent.date" class="input-group-text" required><br>
-
-        <label for="photo">Фото:</label><br>
-        <input type="file" id="photo" accept="image/*" @change="handleFileChange" class="input-photo"><br>
-
-        <button type="submit" class="button" style="margin-top: 12px">Добавить мероприятие</button>
-      </form>
-
-      <!-- Добавленные поля для выбора диапазона дат -->
-      <p>Отображение мероприятий</p>
-      <div class="data-container">
-        <label for="startDate" style="font-size: 0.9rem">Начальная дата:</label>
-        <input type="date" id="startDate" v-model="startDateEvents">
-        <label for="endDate" style="font-size: 0.9rem">Конечная дата:</label>
-        <input type="date" id="endDate" v-model="endDateEvents">
-      </div>
-
-      <div v-for="(item, index) in filteredEvents" :key="index" class="list-item">
-        <span>{{ item.title }}</span>
-        <br>
-        <span class="event-text">{{ item.text }}</span>
-        <br>
-        <button class="button action-button" @click="editNewsEvent(index)">Редактировать</button>
-        <button class="button action-button delete" @click="deleteNewsEvent(index)">Удалить</button>
-      </div>
-    </div>
-    <div class="section2">
-      <p style="font-weight: bold">Управление книгами</p>
-
-      <form @submit.prevent="FormBookAdd">
-        <label for="book_title" >Наименование книги:</label><br>
-        <input type="text" v-model="bookTitle" style="width: 400px;" required><br>
-
-        <label>Количество авторов:</label><br>
-        <input type="number" v-model="authorCount" min="1" required><br>
-
-        <div v-for="index in authorCount" :key="index" style="display: inline-block; padding: 8px 8px 0px 0">
-          <label>Автор {{ index }}:</label><br>
-          <input type="text" v-model="authors[index-1].firstname" placeholder="Имя" style="width: 300px; margin-bottom: 8px" required><br>
-          <input type="text" v-model="authors[index-1].lastname" placeholder="Фамилия" style="width: 300px; margin-bottom: 8px" required><br>
-          <input type="text" v-model="authors[index-1].patronymic" placeholder="Отчество" style="width: 300px; margin-bottom: 8px" ><br>
-        </div><br>
-
-        <label>Количество жанров:</label><br>
-        <input type="number" v-model="genreCount" min="1" required><br>
-
-        <div v-for="index in genreCount" :key="index" style="display: inline-block; padding: 8px 8px 8px 0">
-          <label>Жанр {{ index }}:</label><br>
-          <input type="text" v-model="genres[index-1]" required><br>
-        </div><br>
-
-        <input type="submit" value="Добавить книгу" class="button" style="margin-bottom: 24px; padding: 8px 16px; border-radius: 8px">
-      </form>
-
-    </div>
-
+    <!--    Обработка заявок на бронирование-->
     <div class="section">
-      <p style="font-weight: bold">Обработка заявок на бронирование</p>
-      <div v-for="(request, index) in bookingRequests" :key="index" class="booking-request">
-        <p>{{ request.surname }} {{ request.name }} подал заявку на бронирование книги "{{ request.book }}"</p>
-        <button class="button action-button" @click="approveRequest(index)">Одобрить</button>
-        <button class="button action-button delete" @click="rejectRequest(index)">Отклонить</button>
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Обработка заявок на бронирование</p>
+        <button @click="showRequests= !showRequests"
+                style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showRequests" style="margin-bottom: 16px">
+        <div v-for="(request, index) in bookingRequests" :key="index">
+          <div v-if="request.state === null" class="booking-request">
+            <p>№ {{ request.id }}</p>
+            <p><b>{{ request.surname }} {{ request.name }} {{ request.patronymic}}</b> (CardID: <b>{{ request.cardId }}</b>) подал(a) заявку на бронирование книги:</p>
+            <div class="book-info" style="margin-bottom: 16px">
+              <p>"{{ request.book }}"</p>
+              <p>Год издания: {{ request.year }}</p>
+              <p>Издательство: {{ request.publisher }}</p>
+            </div>
+
+            <button class="button action-button" @click="approveRequest(index)">Одобрить</button>
+            <button class="button action-button delete" @click="rejectRequest(index)">Отклонить</button>
+          </div>
+        </div>
       </div>
     </div>
+    <!--    Одобренные заявки-->
     <div class="section">
-      <p style="font-weight: bold">Просмотр статистики</p>
-      <p class="statistics">Общее количество пользователей: {{ totalUsers }}</p>
-      <p class="statistics">Количество заявок за текущий год: {{ requestsCount }}</p>
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Одобренные заявки</p>
+        <button @click="showApproved= !showApproved"
+                style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showApproved" style="margin-bottom: 16px">
+        <div v-for="(request, index) in bookingRequests" :key="index">
+          <div v-if="request.state === true" class="booking-request">
+            <p>№ {{ request.id }}</p>
+            <p><b>{{ request.surname }} {{ request.name }} {{ request.patronymic}}</b> (CardID: <b>{{ request.cardId }}</b>) забронировал(а) книгу:</p>
+            <div class="book-info" style="margin-bottom: 16px">
+              <p>"{{ request.book }}"</p>
+              <p>Год издания: {{ request.year }}</p>
+              <p>Издательство: {{ request.publisher }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--    Добавление новости-->
+    <div class="section news">
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Управление новостями</p>
+        <button @click="showNews = !showNews"
+                style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showNews">
+        <p>Добавление новости</p>
+        <form @submit.prevent="submitFormNews">
+          <label for="title">Заголовок:</label><br>
+          <input type="text" id="title" v-model="newNews.title" required class="input-group-text" style="width: 500px; overflow-x: auto!important;"><br>
+
+          <label for="content">Текст новости:</label><br>
+          <textarea id="content" v-model="newNews.text" style="height: 200px; width: 500px; resize: none" class="input-group-text"></textarea><br>
+
+          <label for="date">Дата:</label><br>
+          <input type="date" id="date" v-model="newNews.date" class="input-group-text" required><br>
+
+          <label for="photo">Фото:</label><br>
+          <input type="file" id="photo" accept="image/*" @change="handleFileChange" class=""><br>
+
+          <button type="submit" class="button" style="margin-top: 12px; padding: 8px 16px">Добавить новость</button>
+        </form>
+      </div>
+    </div>
+    <!--    Добавление мероприятия-->
+    <div class="section ">
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Управление мероприятиями</p>
+        <button @click="showEvents = !showEvents"
+                style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showEvents">
+        <p>Добавление мероприятия</p>
+        <form @submit.prevent="submitFormEvents" style="">
+          <label for="title">Заголовок:</label><br>
+          <input type="text" id="title" v-model="newEvent.title" class="input-group-text" required style="width: 500px; overflow-x: auto"><br>
+
+          <label for="content">Текст мероприятия:</label><br>
+          <textarea id="content" v-model="newEvent.text" required style="height: 200px; width: 500px; resize: none" class="input-group-text"></textarea><br>
+
+          <label for="date">Дата:</label><br>
+          <input type="date" id="date" v-model="newEvent.date" class="input-group-text" required><br>
+
+          <label for="photo">Фото:</label><br>
+          <input type="file" id="photo" accept="image/*" @change="handleFileChange" class="input-photo"><br>
+
+          <button type="submit" class="button" style="margin-top: 12px; padding: 8px 16px">Добавить мероприятие</button>
+        </form>
+      </div>
+    </div>
+    <!--    Добавление книги-->
+    <div class="section">
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Управление книгами</p>
+        <button @click="showAddBook= !showAddBook"
+                style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showAddBook">
+        <form @submit.prevent="FormBookAdd" class="book-form">
+          <label for="book_title" >Наименование книги:</label><br>
+          <input type="text" v-model="newBook.bookTitle" style="max-width: 400px;" required class="inp"><br>
+
+          <label>Количество авторов:</label><br>
+          <input type="number" v-model="newBook.authorCount" min="1" required class="inp"><br>
+
+          <div v-for="index in newBook.authorCount" :key="index" style="display: inline-block; padding: 8px 8px 0px 0">
+            <label>Автор {{ index }}:</label><br>
+            <input type="text" v-model="newBook.authors[index-1].firstname" placeholder="Имя" class="inp" style="max-width: 250px; margin-bottom: 8px" required><br>
+            <input type="text" v-model="newBook.authors[index-1].lastname" placeholder="Фамилия" class="inp" style="max-width: 250px; margin-bottom: 8px" required><br>
+            <input type="text" v-model="newBook.authors[index-1].patronymic" placeholder="Отчество" class="inp" style="max-width: 250px; margin-bottom: 8px" ><br>
+          </div><br>
+
+          <label>Количество жанров:</label><br>
+          <input type="number" v-model="newBook.genreCount" min="1" required class="inp"><br>
+
+          <div v-for="index in newBook.genreCount" :key="index" style="display: inline-block; padding: 8px 8px 8px 0">
+            <label>Жанр {{ index }}:</label><br>
+            <input type="text" v-model="newBook.genres[index-1]" required class="inp"><br>
+          </div><br>
+
+          <label for="year" >Год издания книги:</label><br>
+          <input type="number" v-model="newBook.year" required style="margin-bottom: 8px" class="inp"><br>
+
+          <label for="publisher" >Издательство:</label><br>
+          <input type="text" v-model="newBook.publisher" style="margin-bottom: 24px" required class="inp"><br>
+
+          <div style="display: flex; justify-content: end">
+            <button type="reset"
+                    style="background-color: #eef2fa; color: #2c3e50; border: none; border-radius: 8px; height: 42px; margin-right: 8px;
+                            width:fit-content; padding: 0 16px ">
+              Очистить
+            </button>
+            <input type="submit" value="Добавить книгу" class="button"
+                   style="margin-bottom: 24px; padding: 8px 16px; border-radius: 8px; width: fit-content">
+          </div>
+        </form>
+      </div>
+    </div>
+    <!--    Просмотр статистики-->
+    <div class="section">
+      <div>
+        <p style="font-weight: bold; display: inline-block; width: 80%">Просмотр статистики</p>
+        <button @click="showStat= !showStat"
+                style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
+          <span class="material-icons" v-if="!showStat">expand_more</span>
+          <span class="material-icons" v-if="showStat">expand_less</span>
+        </button>
+      </div>
+      <div v-if="showStat">
+        <div style="margin-bottom: 16px">
+          <button @click="refreshCount" style="display: inline-block; border: none; border-radius: 8px; height: 36px; font-size: 14px;
+                                              background-color: #e5e7e8; color: #4c4d54; margin-right: 16px; padding: 0 8px">
+            Обновить данные
+          </button>
+          <p class="statistics">Общее количество пользователей: {{ totalUsers }}</p>
+        </div>
+        <div style="margin-bottom: 16px">
+          <button @click="refreshOrderBooks" style="display: inline-block; border: none; border-radius: 8px; height: 36px; font-size: 14px;
+                                              background-color: #e5e7e8; color: #4c4d54; margin-right: 16px; padding: 0 8px">
+            Обновить данные
+          </button>
+          <p class="statistics">Количество заявок за текущий год: {{ requestsCount }}</p>
+        </div>
+
+      </div>
     </div>
   </div>
 </template>
@@ -145,44 +213,65 @@ export default {
         { title: 'Мероприятие 3', type: 'event', text: 'abcde', date: '2024-02-01' },
       ],
       books : [
-        { title: 'Книга 1', author: 'Автор 1' },
-        { title: 'Книга 2', author: 'Автор 2' }
+        { title: 'Книга 1', author: 'Автор 1', year: '2000', publisher: 'Дрофа' },
+        { title: 'Книга 2', author: 'Автор 2', year: '2002', publisher: 'Москва' }
       ],
       bookingRequests: [
         {
+          id: '1',
           surname: 'Иванов',
           name: 'Алексей',
+          patronymic: 'Иванович',
+          cardId: 'AF2344568764',
+          year: '2000',
+          publisher: 'Эксмо',
+          state: true,
           book: 'Мастер и Маргарита'
         },
         {
+          id: '2',
           surname: 'Сидоров',
           name: 'Николай',
+          patronymic: 'Семенович',
+          cardId: 'AF2344564864',
+          year: '2001',
+          publisher: 'Дрофа',
+          state: true,
           book: 'Преступление и наказание'
         },
         {
+          id: '3',
           surname: 'Кузнецова',
           name: 'Елена',
+          patronymic: 'Николаевна',
+          cardId: 'AF1145657640',
+          year: '2015',
+          state: null,
+          publisher: 'Санкт-Петербург',
           book: 'Братья Карамазовы'
         },
         {
+          id: '4',
           surname: 'Морозов',
           name: 'Дмитрий',
+          patronymic: 'Олегович',
+          cardId: 'AF1145657640',
+          year: '2008',
+          state: null,
+          publisher: 'Москва',
           book: 'Анна Каренина'
-        },
-        {
-          surname: 'Васильева',
-          name: 'Ирина',
-          book: 'Автоматизированные библиотечно-информационные системы России: состояние, выбор, внедрение и развитие'
         }
       ],
 
       totalUsers : 4, // Количество пользователей
       requestsCount : 5, // Количество заявок
-      startDateNews: '', // Начальная дата
-      endDateNews: '', // Конечная дата
-      startDateEvents: '', // Начальная дата
-      endDateEvents: '',// Конечная дата
       showModal: false,
+      showApproved: false,
+      showRequests: false,
+      showNews: false,
+      showEvents: false,
+      showAddBook: false,
+      showStat: false,
 
       // новая новость
       newNews: {
@@ -201,61 +290,21 @@ export default {
       },
 
       // добавление книги
-      bookTitle: '',
-      authorCount: 1, // Изначально один автор
-      genreCount: 1, // Изначально один жанр
-      authors: [{ firstname: '', lastname: '', patronymic: '' }], // Массив для данных об авторах
-      genres: [''], // Массив для данных о жанрах
-
-      // забронированные книги
-      reservedBooks: [
-        { id: 1, title: 'Книга 1', authors: ['Автор 1', 'Автор 2'], status: 'Забронировано' },
-        { id: 2, title: 'Книга 2', authors: ['Автор 3', 'Автор 4'], status: 'Забронировано' }
-      ],
-
-
+      newBook: {
+        bookTitle: '',
+        authorCount: 1, // Изначально один автор
+        genreCount: 1, // Изначально один жанр
+        authors: [{ firstname: '', lastname: '', patronymic: '' }], // Массив для данных об авторах
+        genres: [''], // Массив для данных о жанрах
+        publisher: '',
+        year: null,
+      },
     };
   },
   mounted() {
 
   },
   computed: {
-    // Фильтруем новости по выбранному диапазону дат
-    filteredNews() {
-      return this.news.filter(item => {
-        const itemDate = new Date(item.date);
-        const start = this.startDateNews ? new Date(this.startDateNews) : null;
-        const end = this.endDateNews ? new Date(this.endDateNews) : null;
-        // Если дата начала не выбрана, фильтруем только по дате конца
-        if (!start && end) {
-          return itemDate <= end;
-        }
-        // Если дата конца не выбрана, фильтруем только по дате начала
-        if (start && !end) {
-          return itemDate >= start;
-        }
-        // Если выбраны обе даты, фильтруем по диапазону
-        return itemDate >= start && itemDate <= end;
-      });
-    },
-    // Фильтруем мероприятия по выбранному диапазону дат
-    filteredEvents() {
-      return this.Events.filter(item => {
-        const itemDate = new Date(item.date);
-        const start = this.startDateEvents ? new Date(this.startDateEvents) : null;
-        const end = this.endDateEvents ? new Date(this.endDateEvents) : null;
-        // Если дата начала не выбрана, фильтруем только по дате конца
-        if (!start && end) {
-          return itemDate <= end;
-        }
-        // Если дата конца не выбрана, фильтруем только по дате начала
-        if (start && !end) {
-          return itemDate >= start;
-        }
-        // Если выбраны обе даты, фильтруем по диапазону
-        return itemDate >= start && itemDate <= end;
-      });
-    },
 
   },
 
@@ -374,7 +423,11 @@ export default {
       } catch (error) {
         console.error('Ошибка:', error);
       }
-    }
+    },
+
+    async refreshCount() {},
+
+    async refreshOrderBooks() {},
   }
 };
 </script>
@@ -382,13 +435,14 @@ export default {
 <style scoped>
 .admin-panel {
   text-align: left;
+  margin-bottom: 36px;
 }
 .section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   max-width: 800px;
   border: #aebccb 1px solid;
   border-radius: 8px;
-  padding: 10px;
+  padding: 16px 16px 10px 36px;
   background-color: #ffffff;
 }
 .section p {
@@ -409,13 +463,13 @@ export default {
   background-color: #182542;
   color: white;
 }
-.list-item {
-  margin-bottom: 10px;
-  align-items: flex-start;
+.book-info p {
+  margin-bottom: 0;
 }
-.event-text {
-  color: #182542;
-  font-size: 0.8rem;
+.book-form {
+  input.inp {
+    min-width: 250px;
+  }
 }
 .action-button {
   background-color: #9dd3b6;
@@ -443,56 +497,6 @@ export default {
 }
 p.statistics {
   font-size: 1rem;
-  margin-top: 20px;
-}
-.data-container {
-  #startDate {
-    margin: 0 10px;
-    background-color: #f6f9ff;
-    border-radius: 0px;
-    border: none;
-    padding: 2px 4px;
-  }
-  #endDate {
-    margin: 0 10px;
-    background-color: #f6f9ff;
-    border-radius: 0px;
-    border: none;
-    padding: 2px 4px;
-  }
-}
-
-.event {
   display: inline-block;
-  width: 624px;
-  max-width: 700px;
-}
-.event.news {
-  margin-right: 36px;
-}
-.section2 {
-  max-width: 90vw;
-}
-.section2 {
-  input {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px 8px;
-  }
-  label {
-    font-size: 0.9rem;
-  }
-}
-
-.booked-list {
-  text-align: left;
-}
-.status {
-  padding: 0 16px;
-}
-.booked-list {
-  p {
-    margin: 0;
-  }
 }
 </style>

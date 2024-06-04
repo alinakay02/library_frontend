@@ -39,6 +39,8 @@
   "register": {
     "fname": "Имя",
     "lname": "Фамилия",
+    "patronymic": "Отчество",
+    "cardId": "Номер карты читателя",
     "title": "Регистрация",
     "username": "Логин",
     "password": "Пароль",

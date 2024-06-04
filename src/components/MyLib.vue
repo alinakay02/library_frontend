@@ -10,13 +10,22 @@ const { t } = useI18n({useScope: 'global'});
       <div class="profile-info">
         <img src="../assets/profile-icon.png" alt="Profile" class="profile-image">
         <div class="user-details">
-          <div class="users">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="users">{{ user.firstName }}</div>
+          <div class="users">{{ user.lastName }}</div>
+          <div class="users">{{ user.patronymic }}</div>
+          <div class="users">CardID: {{ user.cardId }}</div>
           <p>Логин: {{ user.username }}</p>
         </div>
       </div>
-      <button class="change-password-button" @click="showChangePasswordForm = !showChangePasswordForm">
-        <p>{{ t('profile.change') }}</p>
-      </button>
+      <div style="display: flex; flex-direction: column">
+        <button class="change-password-button" @click="showChangePasswordForm = !showChangePasswordForm">
+          <p>{{ t('profile.change') }}</p>
+        </button>
+        <button class="change-password-button" style="padding: 16px; background-color: #203156; color: white;" @click="logout">
+          <p>Выйти</p>
+        </button>
+      </div>
+
     </div>
     <div v-if="showChangePasswordForm" class="change-password-form">
       <div class="text">{{ t('profile.change') }}</div>
@@ -77,6 +86,7 @@ const { t } = useI18n({useScope: 'global'});
 <script>
 import AdminPanel from './AdminPanel.vue'; // Импорт компонента админ-панели
 
+
 export default {
   name: "PdfViewer",
   props: { docPath: String },
@@ -88,6 +98,8 @@ export default {
       user: {
         firstName: 'Алина',
         lastName: 'Каюмова',
+        patronymic: 'Габдулахатовна',
+        cardId: 'GA9861112549',
         username: 'username'
       },
       savedBooks: [
@@ -133,7 +145,7 @@ export default {
       showChangePasswordForm: false,
       newPassword: '',
       repeatPassword: '',
-      admin: false, // роль пользователя
+      admin: true, // роль пользователя
       authorized: true, // признак что пользователь авторизовался
 
       // для админа
@@ -233,6 +245,9 @@ export default {
         console.error('Book URL not found!');
       }
     },
+    logout() {
+        this.$router.push({ path: '/login' });
+    }
   }
 };
 </script>
@@ -275,6 +290,7 @@ export default {
   background-color: transparent;
   transition: background-color 0.3s ease;
   min-width: 300px;
+  z-index: 2;
 }
 .change-password-form input:hover,
 .change-password-form input:focus, .change-password-form input:active {
@@ -319,7 +335,7 @@ export default {
   height: 48px;
   padding: 10px 20px;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 14px;
 }
 .change-password-button p{
   line-height: 1;

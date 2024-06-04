@@ -39,6 +39,8 @@
   "register": {
     "fname": "First name",
     "lname": "Last name",
+    "patronymic": "Patronymic",
+    "cardId": "Reader's card number",
     "title": "Sign up",
     "username": "Login",
     "password": "Password",

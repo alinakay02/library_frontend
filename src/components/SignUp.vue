@@ -26,6 +26,18 @@ const { t } = useI18n({useScope: 'global'});
           </div>
           <div class="col">
             <div class="md-form">
+              <label for="materialRegisterFormLastName">{{ t('register.patronymic') }}</label>
+              <input type="text" id="materialRegisterFormPatronymic" class="form-control">
+            </div>
+          </div>
+          <div class="col">
+            <div class="md-form">
+              <label for="materialRegisterFormLastName">{{ t('register.cardId') }}</label>
+              <input type="text" id="materialRegisterFormcardId" class="form-control">
+            </div>
+          </div>
+          <div class="col">
+            <div class="md-form">
               <label for="materialRegisterFormLastName">{{ t('register.username') }}</label>
               <input type="text" id="materialRegisterFormUsername" class="form-control">
             </div>

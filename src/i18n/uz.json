@@ -39,6 +39,8 @@
   "register": {
     "fname": "Ism",
     "lname": "Familiya",
+    "patronymic": "Otasining ismi",
+    "cardId": "O'quvchi karta raqami",
     "title": "Ro'yxatdan o'tish",
     "username": "Login",
     "password": "Parol",
