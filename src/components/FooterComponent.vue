@@ -37,6 +37,7 @@ export default {
   padding: 10px;
   text-align: center;
   min-height: 152px;
+  font-family: 'IBM Plex Serif', serif;
 }
 .footer-content {
   display: flex;

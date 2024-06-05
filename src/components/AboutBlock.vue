@@ -6,7 +6,7 @@ const { t, locale } = useI18n({useScope: 'global'});
 
 <template>
 <div class="about">
-  <div><p class="title">{{t('about.title')}}</p></div>
+  <div><p class="section-title">{{t('about.title')}}</p></div>
   <br>
   <div class="content-container">
     <div class="image">
@@ -42,8 +42,16 @@ const { t, locale } = useI18n({useScope: 'global'});
   .image,
   .text {
     min-width: 80vw;
-    margin-right: 0; /* Убираем отступ между изображением и текстом */
+    margin-right: 0;
   }
+}
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 20px 40px 10px;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
 }
 .content-container {
   display: flex;

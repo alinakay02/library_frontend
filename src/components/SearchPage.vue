@@ -4,7 +4,7 @@
 
 <template>
 <div class="search-book">
-  <p>Поиск книг</p>
+  <p class="section-title">Поиск книг</p>
   <form @submit.prevent="searchBooks" class="search-form">
     <label for="author" style="margin-right: 122px">Автор:</label>
     <input type="text" id="author" v-model="authorQuery"><br>
@@ -22,7 +22,7 @@
     <p v-if="searchResults.length > 0">Результаты поиска:</p>
     <div v-if="searchResults.length > 0" class="books-list">
       <div v-for="book in searchResults" :key="book.id" class="book">
-        <img src="../assets/book-icon.png" alt="Book" class="book-image" @click="openPdf(book.pdfUrl)">
+        <img src="../assets/book-icon.png" alt="Book" class="book-image" @click="readBook(book.pdfUrl)">
         <div class="book-details">
           <p style="padding-bottom: 12px">{{ book.title }}</p>
           <p v-if="Array.isArray(book.author)">
@@ -33,6 +33,8 @@
           <p v-else>
             {{ book.author.firstname }} {{ book.author.patronymic }} {{ book.author.lastname }}
           </p>
+          <p>Год издания: {{ book.year }}</p>
+          <p>Издательство: {{ book.publisher }}</p>
         </div>
         <div class="status">
           <button @click="bookedBook(book.id)" >
@@ -51,10 +53,10 @@
         </div>
       </div>
     </div>
-    <p v-else>Ничего не найдено</p>
+    <p v-else class="section-title">Ничего не найдено</p>
   </div>
   <div v-else>
-    <p>Введите данные для поиска</p>
+    <p class="section-title">Введите данные для поиска</p>
   </div>
 </div>
 
@@ -75,6 +77,8 @@ export default {
           title: 'Мастер и Маргарита',
           author: { firstname: 'Михаил', patronymic: 'Афанасьевич', lastname: 'Булгаков' },
           pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2001',
+          publisher: 'Дрофа',
           genre: 'Художественная литература'
         },
         {
@@ -82,6 +86,8 @@ export default {
           title: 'Война и мир',
           author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
           pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2003',
+          publisher: 'Москва',
           genre: 'Художественная литература'
         },
         {
@@ -89,6 +95,8 @@ export default {
           title: 'Преступление и наказание',
           author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
           pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2010',
+          publisher: 'Дрофа',
           genre: 'Художественная литература'
         },
         {
@@ -96,6 +104,8 @@ export default {
           title: 'Братья Карамазовы',
           author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
           pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2007',
+          publisher: 'Дрофа',
           genre: 'Художественная литература'
         },
         {
@@ -103,6 +113,8 @@ export default {
           title: 'Анна Каренина',
           author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
           pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2006',
+          publisher: 'Санкт-Петербург',
           genre: 'Художественная литература'
         },
         {
@@ -112,6 +124,8 @@ export default {
           { firstname: 'Яков', patronymic: 'Леонидович', lastname: 'Шрайберг' },
           { firstname: 'Феликс', patronymic: 'Семёнович', lastname: 'Воройский' }],
             pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2015',
+          publisher: 'Юрайт',
           genre: 'Документоведение'
         }
       ]
@@ -200,6 +214,7 @@ export default {
 }
 </script>
 <style scoped>
+
 .search-book {
   text-align: left;
   max-width: 80vw;
@@ -210,6 +225,14 @@ export default {
     margin-top: 8px;
     margin-left: 20px;
   }
+}
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 20px 0px 10px;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
 }
 .search-form {
   input {

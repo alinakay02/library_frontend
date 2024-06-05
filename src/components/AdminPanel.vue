@@ -5,11 +5,11 @@ const { t } = useI18n({useScope: 'global'});
 
 <template>
   <div class="admin-panel">
-    <p style="font-weight: bold; font-size: 1.2rem; padding-left: 20px">Панель администратора</p>
+    <p class="section-title">Панель администратора</p>
     <!--    Обработка заявок на бронирование-->
     <div class="section">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Обработка заявок на бронирование</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Обработка заявок на бронирование</p>
         <button @click="showRequests= !showRequests"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showRequests">expand_more</span>
@@ -36,7 +36,7 @@ const { t } = useI18n({useScope: 'global'});
     <!--    Одобренные заявки-->
     <div class="section">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Одобренные заявки</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Одобренные заявки</p>
         <button @click="showApproved= !showApproved"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showApproved">expand_more</span>
@@ -61,7 +61,7 @@ const { t } = useI18n({useScope: 'global'});
     <!--    Добавление новости-->
     <div class="section news">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Управление новостями</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Управление новостями</p>
         <button @click="showNews = !showNews"
                 style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showNews">expand_more</span>
@@ -90,7 +90,7 @@ const { t } = useI18n({useScope: 'global'});
     <!--    Добавление мероприятия-->
     <div class="section ">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Управление мероприятиями</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Управление мероприятиями</p>
         <button @click="showEvents = !showEvents"
                 style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showEvents">expand_more</span>
@@ -119,7 +119,7 @@ const { t } = useI18n({useScope: 'global'});
     <!--    Добавление книги-->
     <div class="section">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Управление книгами</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Управление книгами</p>
         <button @click="showAddBook= !showAddBook"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showAddBook">expand_more</span>
@@ -170,7 +170,7 @@ const { t } = useI18n({useScope: 'global'});
     <!--    Просмотр статистики-->
     <div class="section">
       <div>
-        <p style="font-weight: bold; display: inline-block; width: 80%">Просмотр статистики</p>
+        <p style="display: inline-block; width: 80%" class="section-title">Просмотр статистики</p>
         <button @click="showStat= !showStat"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
           <span class="material-icons" v-if="!showStat">expand_more</span>
@@ -440,6 +440,15 @@ export default {
 </script>
 
 <style scoped>
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 0;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
+  display: inline-block;
+}
 .admin-panel {
   text-align: left;
   margin-bottom: 36px;

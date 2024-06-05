@@ -1,4 +1,5 @@
 <template>
+  <p class="section-title">Новости</p>
   <div class="news-list">
     <div v-for="item in news" :key="item.id" class="news-wrapper" @click="openNews(item.id)">
       <div class="image">
@@ -63,6 +64,15 @@ export default {
 </script>
 
 <style scoped>
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 20px 40px 10px;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
+}
+
 .news-list {
   display: flex;
   flex-wrap: wrap;

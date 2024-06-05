@@ -5,7 +5,7 @@ const { t } = useI18n({useScope: 'global'});
 
 <template>
   <div v-if="authorized" class="profile">
-    <div class="text">{{ t('profile.prof') }}</div>
+    <p class="section-title">{{ t('profile.prof') }}</p>
     <div class="user-profile">
       <div class="profile-info">
         <img src="../assets/profile-icon.png" alt="Profile" class="profile-image">
@@ -28,52 +28,80 @@ const { t } = useI18n({useScope: 'global'});
 
     </div>
     <div v-if="showChangePasswordForm" class="change-password-form">
-      <div class="text">{{ t('profile.change') }}</div>
+      <div class="text" style="font-family: 'IBM Plex Serif', serif;">{{ t('profile.change') }}</div>
       <div class="password-form">
         <input type="password" v-model="newPassword" :placeholder=" t('profile.placeholder1') ">
         <input type="password" v-model="repeatPassword" :placeholder=" t('profile.placeholder2') ">
         <button @click="savePassword" class="save-button">{{ t('profile.saveButton') }}</button>
       </div>
     </div>
-    <div v-if="!admin" class="text">{{ t('profile.saved') }}</div>
-    <div v-if="!admin" class="book-list">
-        <div v-for="book in savedBooks" :key="book.id" class="book">
-          <img src="../assets/book-icon.png" alt="Book" class="book-image">
-          <div class="book-details">
-            <p style="padding-bottom: 12px; font-weight: bold">{{ book.title }}</p>
-            <p v-if="Array.isArray(book.author)">
-            <span v-for="(author, index) in book.author" :key="index">
-              {{ author.firstname }} {{ author.patronymic }} {{ author.lastname }} <br>
-            </span>
-            </p>
-            <p v-else>
-              {{ book.author.firstname }} {{ book.author.patronymic }} {{ book.author.lastname }}
-            </p>
-          </div>
-          <button @click="deleteBook(book.id)" class="delete-button">
-            <img src="../assets/delete-icon.png" alt="Delete">
-          </button>
-          <button @click="bookedBook(book.id)" >
-            <img src="../assets/booked-icon.png" alt="" title="Забронировать книгу">
-          </button>
-          <button @click="readBook(book.id)" >
-            <img src="../assets/read-icon.png" alt="" title="Чтение книги" style="height: 44px; width: 44px">
-          </button>
-        </div>
+    <div class="text">
+      <p style="display: inline-block;" class="section-title">{{ t('profile.saved') }}
+      <button @click="showSavedBooks= !showSavedBooks"
+              style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
+        <span class="material-icons" v-if="!showSavedBooks">expand_more</span>
+        <span class="material-icons" v-if="showSavedBooks">expand_less</span>
+      </button>
+      </p>
     </div>
-    <div v-if="!admin" class="text">Забронированные книги</div>
-    <div v-if="!admin" class="booked-list">
+      <div v-if="showSavedBooks && !admin" class="book-list">
+          <div v-for="book in savedBooks" :key="book.id" class="book">
+            <img src="../assets/book-icon.png" alt="Book" class="book-image">
+            <div class="book-details" style="width: 60%">
+              <p style="padding-bottom: 12px; font-weight: bold">{{ book.title }}</p>
+              <p v-if="Array.isArray(book.author)">
+              <span v-for="(author, index) in book.author" :key="index">
+                {{ author.firstname }} {{ author.patronymic }} {{ author.lastname }} <br>
+              </span>
+              </p>
+              <p v-else>
+                {{ book.author.firstname }} {{ book.author.patronymic }} {{ book.author.lastname }}
+              </p>
+              <p>Год издания: {{ book.year }}</p>
+              <p>Издательство: {{ book.publisher }}</p>
+            </div>
+            <div style="display: inline-block; margin-left: auto">
+              <button @click="deleteBook(book.id)" class="delete-button">
+                <img src="../assets/delete-icon.png" alt="Delete">
+              </button>
+              <button @click="bookedBook(book.id)" >
+                <img src="../assets/booked-icon.png" alt="" title="Забронировать книгу">
+              </button>
+              <button @click="readBook(book.id)" >
+                <img src="../assets/read-icon.png" alt="" title="Чтение книги" style="height: 44px; width: 44px">
+              </button>
+            </div>
+          </div>
+      </div>
+    <div class="text">
+      <p style="display: inline-block" class="section-title">Забронированные книги
+      <button @click="showReservedBooks= !showReservedBooks"
+              style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
+        <span class="material-icons" v-if="!showReservedBooks">expand_more</span>
+        <span class="material-icons" v-if="showReservedBooks">expand_less</span>
+      </button>
+      </p>
+    </div>
+    <div v-if="showReservedBooks" class="booked-list">
       <div v-for="book in reservedBooks" :key="book.id" class="book">
         <img src="../assets/book-icon.png" alt="Book" class="book-image">
-        <div class="book-details">
-          <p>{{ book.title }}</p>
+        <div class="book-details" style="display: inline-block; width: 40%">
+          <p style="font-weight: bold">{{ book.title }}</p>
           <p>{{ book.authors.join(', ') }}</p>
+          <p>Год издания: {{ book.year }}</p>
+          <p>Издательство: {{ book.publisher }}</p>
         </div>
-        <div class="status">{{ book.status }}</div>
+        <div style="display: inline-block; margin-left: auto">
+          <div class="status" style="display: inline-block; padding: 2px 8px; border-radius: 6px"
+               :style="{ backgroundColor: getStatusColor(book.status)}">{{ getStatusText(book.status) }}</div>
+          <button @click="deleteBookFromReserv(book.id)" class="delete-button">
+            <img src="../assets/delete-icon.png" alt="Delete">
+          </button>
+        </div>
       </div>
     </div>
 
-    <AdminPanel v-if="admin" />
+    <AdminPanel v-if="admin"/>
   </div>
 
   <div v-else class="not-authorized">
@@ -85,8 +113,6 @@ const { t } = useI18n({useScope: 'global'});
 
 <script>
 import AdminPanel from './AdminPanel.vue'; // Импорт компонента админ-панели
-
-
 export default {
   name: "PdfViewer",
   props: { docPath: String },
@@ -107,31 +133,41 @@ export default {
           id: 1,
           title: 'Мастер и Маргарита',
           author: { firstname: 'Михаил', patronymic: 'Афанасьевич', lastname: 'Булгаков' },
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2001',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         },
         {
           id: 2,
           title: 'Война и мир',
           author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2009',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         },
         {
           id: 3,
           title: 'Преступление и наказание',
           author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2004',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         },
         {
           id: 4,
           title: 'Братья Карамазовы',
           author: { firstname: 'Федор', patronymic: 'Михайлович', lastname: 'Достоевский' },
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2014',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         },
         {
           id: 5,
           title: 'Анна Каренина',
           author: { firstname: 'Лев', patronymic: 'Николаевич', lastname: 'Толстой' },
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2004',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         },
         {
           id: 6,
@@ -139,79 +175,45 @@ export default {
           author: [
             { firstname: 'Яков', patronymic: 'Леонидович', lastname: 'Шрайберг' },
             { firstname: 'Феликс', patronymic: 'Семёнович', lastname: 'Воройский' }],
-          pdfUrl: 'https://drive.google.com/file/d/1DC55qfXIsvgw3Zko-oxzZheRoZq9Zepg/view?usp=sharing',
+          year: '2012',
+          publisher: 'Дрофа',
+          pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         }
       ],
       showChangePasswordForm: false,
       newPassword: '',
       repeatPassword: '',
-      admin: true, // роль пользователя
+      admin: false, // роль пользователя
       authorized: true, // признак что пользователь авторизовался
-
-      // для админа
-      news : [
-        { title: 'Новость 1', type: 'news', text: 'abcde', date: '2024-04-01' },
-        { title: 'Новость 2', type: 'news', text: 'abcde', date: '2024-03-01' },
-        { title: 'Новость 3', type: 'news', text: 'abcde', date: '2024-02-01' },
-      ],
-      Events : [
-        { title: 'Мероприятие 1', type: 'event', text: 'abcde', date: '2024-04-01' },
-        { title: 'Мероприятие 2', type: 'event', text: 'abcde', date: '2024-03-01' },
-        { title: 'Мероприятие 3', type: 'event', text: 'abcde', date: '2024-02-01' },
-      ],
-      books : [
-        { title: 'Книга 1', author: 'Автор 1' },
-        { title: 'Книга 2', author: 'Автор 2' }
-      ],
-      bookingRequests: [
-        { surname: 'Фамилия1', name: 'Имя1', book: 'Книга 1' },
-        { surname: 'Фамилия2', name: 'Имя2', book: 'Книга 2' }
-      ],
-      totalUsers : 100, // Количество пользователей
-      requestsCount : 50, // Количество заявок
-      startDateNews: '', // Начальная дата
-      endDateNews: '', // Конечная дата
-      startDateEvents: '', // Начальная дата
-      endDateEvents: '',// Конечная дата
-      showModal: false,
-
-      // новая новость
-      newNews: {
-        title: '',
-        text: '',
-        date: '',
-        photo: null
-      },
-
-      // новое мероприятие
-      newEvent: {
-        title: '',
-        text: '',
-        date: '',
-        photo: null
-      },
-
-      // добавление книги
-      bookTitle: '',
-      authorCount: 1, // Изначально один автор
-      genreCount: 1, // Изначально один жанр
-      authors: [{ firstname: '', lastname: '', patronymic: '' }], // Массив для данных об авторах
-      genres: [''], // Массив для данных о жанрах
 
       // забронированные книги
       reservedBooks: [
         { id: 1,
           title: 'Анна Каренина',
           authors: ['Лев Николаевич Толстой'],
-          status: 'Забронировано'
+          year: '2004',
+          publisher: 'Дрофа',
+          status: null
         },
         { id: 2,
           title: 'Автоматизированные библиотечно-информационные системы России: состояние, выбор, внедрение и развитие',
           authors: ['Яков Леонидович Шрайберг', 'Феликс Семёнович Воройский'],
-          status: 'Забронировано'
-        }
-      ]
+          year: '2004',
+          publisher: 'Юрайт',
+          status: true
+        },
+        {
+          id: 3,
+          title: 'Мастер и Маргарита',
+          authors: ['Михаил Афанасьевич Булгаков'],
+          year: '2001',
+          publisher: 'Дрофа',
+          status: false
+        },
+      ],
 
+      showSavedBooks: false,
+      showReservedBooks: false,
     };
   },
   mounted() {
@@ -237,6 +239,17 @@ export default {
     bookedBook() {
 
     },
+    getStatusColor(status) {
+      if (status === null) return '#fffac1';
+      if (status === true) return '#cdffc5';
+      if (status === false) return '#ffb7b7';
+    },
+    getStatusText(status) {
+      if (status === null) return 'Ожидает проверки';
+      if (status === true) return 'Забронирована';
+      if (status === false) return 'Отклонена';
+    },
+    // Открытие книги для чтения
     readBook(bookId) {
       const book = this.savedBooks.find(b => b.id === bookId);
       if (book && book.pdfUrl) {
@@ -245,6 +258,11 @@ export default {
         console.error('Book URL not found!');
       }
     },
+    // Удаление резервирования книги
+    deleteBookFromReserv(bookId) {
+
+    },
+    // Выход из системы
     logout() {
         this.$router.push({ path: '/login' });
     }
@@ -279,6 +297,14 @@ export default {
   .text {
     font-size: 16px!important;
   }
+}
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 20px 0 10px;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
 }
 .change-password-form input {
   height: 48px;
@@ -336,6 +362,7 @@ export default {
   padding: 10px 20px;
   cursor: pointer;
   margin-top: 14px;
+  font-family: 'IBM Plex Serif', serif;
 }
 .change-password-button p{
   line-height: 1;
@@ -359,6 +386,7 @@ export default {
   border: none;
   margin: 0 auto;
   padding: 10px 20px;
+  font-family: 'IBM Plex Serif', serif;
 }
 .book-list {
   display: flex;
@@ -380,6 +408,7 @@ export default {
   margin-bottom: 10px;
   width: 43vw;
   max-height: max-content!important;
+  flex-wrap: wrap;
   img {
     width: 36px;
     height: 36px;
@@ -393,6 +422,9 @@ export default {
   flex-grow: 1;
   text-align: left;
   margin-left: 40px;
+}
+.book-details p {
+  margin: 0;
 }
 .book-image {
   margin-left: 20px;
@@ -410,7 +442,7 @@ export default {
   font-size: 20px;
   font-weight: bold;
   text-align: left;
-  margin: 0 auto 10px 20px;
+  margin: 0 auto 10px 0;
 }
 .not-authorized {
   margin: 80px auto;

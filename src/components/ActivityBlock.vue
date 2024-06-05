@@ -6,6 +6,21 @@ import { useRouter } from 'vue-router';
 </script>
 
 <template>
+  <p class="section-title">Мероприятия на текущий месяц</p>
+  <div class="activ-list">
+    <div v-for="event in CurrMonthEvents" :key="event.id" class="activ-wrapper" @click="openActivity(event.id)">
+      <div class="image">
+        <img :src="event.image" class="activity-image">
+      </div>
+      <div class="activ-name">
+        <div style="height: max-content" class="content">
+          <p style="font-weight: 530; font-size: 16px; text-align: left">{{ event.title }}</p>
+          <p style="color: #5c7d9d; font-size: 14px; text-align: right" class="date">{{ event.date }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p class="section-title">Все мероприятия</p>
   <div class="activ-list">
     <div v-for="item in activity" :key="item.id" class="activ-wrapper" @click="openActivity(item.id)">
       <div class="image">
@@ -48,20 +63,6 @@ export default {
               '\n' +
               'В автобиографической повести "шум бала" (1936) отчетливо изображено детство художника, жизнь Ташкента начала века.'
         },
-        {
-          id: 3,
-          title: 'Неделя чтения с 27.05 по 02.06',
-          date: '2024-07-20',
-          image: emblem3,
-          content: 'Полное описание события 3'
-        },
-        {
-          id: 4,
-          title: '27-28 мая Управлением информации и массовых коммуникаций города Ташкента будет проведен семинар "Девиз книголюбов"',
-          date: '2024-07-27',
-          image: emblem4,
-          content: 'Полное описание события 3'
-        }
       ],
       CurrMonthEvents : [
         {
@@ -90,6 +91,14 @@ export default {
 </script>
 
 <style scoped>
+.section-title {
+  font-size: 24px;
+  color: #203156;
+  margin: 20px 40px 10px;
+  text-align: left;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: 600;
+}
 .activ-list {
   display: flex;
   flex-wrap: wrap;
@@ -147,8 +156,10 @@ export default {
   margin-bottom: 16px;
 }
 .activity-image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
+  height: 10vw;
+  width: 10vw;
+  min-width: 100px;
+  min-height: 100px
 }
 </style>

@@ -88,9 +88,8 @@ export default {
 </script>
 
 <style>
-@media (max-width: 500px) {
+@media (max-width: 720px) {
   .pre-block {
-    background-color: #eef3ff;
     max-width: 43vw;
   }
   .nav-block, .top-btn {
@@ -98,7 +97,6 @@ export default {
   }
   .top-block {
     min-width: 52vw;
-    background-color: #eef3ff;
   }
   .top-btn{
     min-width: 16vw!important;
@@ -108,6 +106,13 @@ export default {
   }
   .dropdown-list {
     min-width: 20vw!important;
+  }
+  button.top-btn {
+    padding: 7px 7px 7px 0!important;
+    min-width: 103px!important;
+  }
+  a.top-btn {
+    padding: 7px 8px;
   }
 
 }
@@ -140,9 +145,10 @@ export default {
   display: flex;
   padding: 0;
   margin: 0;
+  font-family: 'IBM Plex Serif', serif;
 }
 .pre-block {
-  background-color: #eef3ff;
+  //background-color: #eef3ff;
   width: 73vw;
 }
 .top-block {
@@ -160,11 +166,13 @@ export default {
   cursor: pointer;
   min-width: fit-content;
   width: 9vw;
-  background-color: #eef3ff;
+  background-color: #ffffff;
   text-decoration: none;
+  font-family: 'IBM Plex Serif', serif;
+  font-weight: bold;
 }
 .top-btn:hover {
-  background-color: #d2d7e5;
+  //background-color: #d2d7e5;
 }
 .nav-str {
   position: sticky;
@@ -186,6 +194,7 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   text-decoration: none;
+  font-family: 'IBM Plex Serif', serif;
 }
 .nav-block:hover {
   background-color: #436591;
