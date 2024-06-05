@@ -22,7 +22,6 @@ const switchlang = (lang) => {
   <div>
     <div class="nav-str">
       <div class="navbar-top">
-        <div class="pre-block"></div>
         <div class="top-block" >
           <button class="lang top-btn " @click="toggleDropdown()">
 <!--            {{ t('buttons.selectlang') }}-->
@@ -89,21 +88,10 @@ export default {
 
 <style>
 @media (max-width: 720px) {
-  .pre-block {
-    max-width: 43vw;
-  }
   .nav-block, .top-btn {
     font-size: 10px;
   }
-  .top-block {
-    min-width: 52vw;
-  }
-  .top-btn{
-    min-width: 16vw!important;
-  }
-  .lang {
-    min-width: 25vw!important;
-  }
+
   .dropdown-list {
     min-width: 20vw!important;
   }
@@ -141,22 +129,19 @@ export default {
   background-color: #d2d7e5;
 }
 .navbar-top {
-  max-width: 100vw;
+  width: calc(100vw - 8px);
   display: flex;
   padding: 0;
   margin: 0;
   font-family: 'IBM Plex Serif', serif;
-}
-.pre-block {
-  //background-color: #eef3ff;
-  width: 73vw;
+  background-color: #f9fcff;
 }
 .top-block {
   display: flex;
-  width: 27vw;
-  float: right;
+  width: fit-content;
   font-size: 12px;
-  position: relative;
+  background-color: #f9fcff;
+  margin: 0 0 0 auto;
 }
 .top-btn {
   float: right;
@@ -164,15 +149,13 @@ export default {
   color: #203156;
   border: none;
   cursor: pointer;
-  min-width: fit-content;
-  width: 9vw;
-  background-color: #ffffff;
+  background-color: #f9fcff;
   text-decoration: none;
   font-family: 'IBM Plex Serif', serif;
   font-weight: bold;
 }
 .top-btn:hover {
-  //background-color: #d2d7e5;
+  background-color: #d2d7e5;
 }
 .nav-str {
   position: sticky;

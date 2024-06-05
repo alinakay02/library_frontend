@@ -31,6 +31,12 @@ export default {
     margin: 5px 0;
   }
 }
+@media (max-width: 550px) {
+  .footer {
+    font-size: 10px!important;
+    padding-top: 30px!important;
+  }
+}
 .footer {
   background: #203156;
   color: #939fab;

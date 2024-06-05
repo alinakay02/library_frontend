@@ -35,7 +35,7 @@ const { t } = useI18n({useScope: 'global'});
         <button @click="savePassword" class="save-button">{{ t('profile.saveButton') }}</button>
       </div>
     </div>
-    <div class="text">
+    <div v-if="admin" class="text">
       <p style="display: inline-block;" class="section-title">{{ t('profile.saved') }}
       <button @click="showSavedBooks= !showSavedBooks"
               style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
@@ -44,7 +44,7 @@ const { t } = useI18n({useScope: 'global'});
       </button>
       </p>
     </div>
-      <div v-if="showSavedBooks && !admin" class="book-list">
+      <div v-if="showSavedBooks && admin" class="book-list">
           <div v-for="book in savedBooks" :key="book.id" class="book">
             <img src="../assets/book-icon.png" alt="Book" class="book-image">
             <div class="book-details" style="width: 60%">
@@ -73,7 +73,7 @@ const { t } = useI18n({useScope: 'global'});
             </div>
           </div>
       </div>
-    <div class="text">
+    <div v-if="admin" class="text">
       <p style="display: inline-block" class="section-title">Забронированные книги
       <button @click="showReservedBooks= !showReservedBooks"
               style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
@@ -91,7 +91,7 @@ const { t } = useI18n({useScope: 'global'});
           <p>Год издания: {{ book.year }}</p>
           <p>Издательство: {{ book.publisher }}</p>
         </div>
-        <div style="display: inline-block; margin-left: auto">
+        <div style="display: inline-block; margin-left: auto" class="status-bar">
           <div class="status" style="display: inline-block; padding: 2px 8px; border-radius: 6px"
                :style="{ backgroundColor: getStatusColor(book.status)}">{{ getStatusText(book.status) }}</div>
           <button @click="deleteBookFromReserv(book.id)" class="delete-button">
@@ -183,7 +183,7 @@ export default {
       showChangePasswordForm: false,
       newPassword: '',
       repeatPassword: '',
-      admin: false, // роль пользователя
+      admin: true, // роль пользователя
       authorized: true, // признак что пользователь авторизовался
 
       // забронированные книги
@@ -294,8 +294,21 @@ export default {
   .save-button {
     padding: 10px!important;
   }
-  .text {
+  .text, .section-title {
     font-size: 16px!important;
+  }
+  .book-image {
+    margin-left: 14px!important;
+  }
+  .status-bar {
+    margin-top: 14px;
+  }
+  p.section-title {
+    margin: 4px 0 10px;
+  }
+  .change-password-button {
+    padding: 0!important;
+    height: 40px!important;
   }
 }
 .section-title {

@@ -5,7 +5,7 @@ const { t } = useI18n({useScope: 'global'});
 
 <template>
   <div class="admin-panel">
-    <p class="section-title">Панель администратора</p>
+    <p class="section-title" style="padding-bottom: 14px">Панель администратора</p>
     <!--    Обработка заявок на бронирование-->
     <div class="section">
       <div>
