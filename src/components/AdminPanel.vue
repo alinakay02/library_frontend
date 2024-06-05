@@ -12,14 +12,14 @@ const { t } = useI18n({useScope: 'global'});
         <p style="font-weight: bold; display: inline-block; width: 80%">Обработка заявок на бронирование</p>
         <button @click="showRequests= !showRequests"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
-          <span class="material-icons" v-if="!showStat">expand_more</span>
-          <span class="material-icons" v-if="showStat">expand_less</span>
+          <span class="material-icons" v-if="!showRequests">expand_more</span>
+          <span class="material-icons" v-if="showRequests">expand_less</span>
         </button>
       </div>
       <div v-if="showRequests" style="margin-bottom: 16px">
         <div v-for="(request, index) in bookingRequests" :key="index">
           <div v-if="request.state === null" class="booking-request">
-            <p>№ {{ request.id }}</p>
+            <p>№ {{ request.id }}, {{ request.date }}</p>
             <p><b>{{ request.surname }} {{ request.name }} {{ request.patronymic}}</b> (CardID: <b>{{ request.cardId }}</b>) подал(a) заявку на бронирование книги:</p>
             <div class="book-info" style="margin-bottom: 16px">
               <p>"{{ request.book }}"</p>
@@ -39,20 +39,21 @@ const { t } = useI18n({useScope: 'global'});
         <p style="font-weight: bold; display: inline-block; width: 80%">Одобренные заявки</p>
         <button @click="showApproved= !showApproved"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
-          <span class="material-icons" v-if="!showStat">expand_more</span>
-          <span class="material-icons" v-if="showStat">expand_less</span>
+          <span class="material-icons" v-if="!showApproved">expand_more</span>
+          <span class="material-icons" v-if="showApproved">expand_less</span>
         </button>
       </div>
       <div v-if="showApproved" style="margin-bottom: 16px">
         <div v-for="(request, index) in bookingRequests" :key="index">
-          <div v-if="request.state === true" class="booking-request">
-            <p>№ {{ request.id }}</p>
+          <div v-if="request.state === true" class="booking-request" style="max-width: 700px">
+            <p>№ {{ request.id }}, {{ request.date }}</p>
             <p><b>{{ request.surname }} {{ request.name }} {{ request.patronymic}}</b> (CardID: <b>{{ request.cardId }}</b>) забронировал(а) книгу:</p>
-            <div class="book-info" style="margin-bottom: 16px">
+            <div class="book-info" style="margin-bottom: 16px; display: inline-block">
               <p>"{{ request.book }}"</p>
               <p>Год издания: {{ request.year }}</p>
               <p>Издательство: {{ request.publisher }}</p>
             </div>
+            <button class="button action-button delete" @click="rejectRequest(index)" style="display: inline-block; float: right; margin-bottom: 16px">Удалить</button>
           </div>
         </div>
       </div>
@@ -63,8 +64,8 @@ const { t } = useI18n({useScope: 'global'});
         <p style="font-weight: bold; display: inline-block; width: 80%">Управление новостями</p>
         <button @click="showNews = !showNews"
                 style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
-          <span class="material-icons" v-if="!showStat">expand_more</span>
-          <span class="material-icons" v-if="showStat">expand_less</span>
+          <span class="material-icons" v-if="!showNews">expand_more</span>
+          <span class="material-icons" v-if="showNews">expand_less</span>
         </button>
       </div>
       <div v-if="showNews">
@@ -92,8 +93,8 @@ const { t } = useI18n({useScope: 'global'});
         <p style="font-weight: bold; display: inline-block; width: 80%">Управление мероприятиями</p>
         <button @click="showEvents = !showEvents"
                 style="display: inline-block; background-color: white; border: none; float: right; width: 10%; height: 24px">
-          <span class="material-icons" v-if="!showStat">expand_more</span>
-          <span class="material-icons" v-if="showStat">expand_less</span>
+          <span class="material-icons" v-if="!showEvents">expand_more</span>
+          <span class="material-icons" v-if="showEvents">expand_less</span>
         </button>
       </div>
       <div v-if="showEvents">
@@ -121,8 +122,8 @@ const { t } = useI18n({useScope: 'global'});
         <p style="font-weight: bold; display: inline-block; width: 80%">Управление книгами</p>
         <button @click="showAddBook= !showAddBook"
                 style="display: inline-block; background-color: white; border: none; margin-left: 16px; float: right; width: 10%; height: 24px">
-          <span class="material-icons" v-if="!showStat">expand_more</span>
-          <span class="material-icons" v-if="showStat">expand_less</span>
+          <span class="material-icons" v-if="!showAddBook">expand_more</span>
+          <span class="material-icons" v-if="showAddBook">expand_less</span>
         </button>
       </div>
       <div v-if="showAddBook">
@@ -226,7 +227,8 @@ export default {
           year: '2000',
           publisher: 'Эксмо',
           state: true,
-          book: 'Мастер и Маргарита'
+          book: 'Мастер и Маргарита',
+          date: '2024-05-15'
         },
         {
           id: '2',
@@ -237,7 +239,8 @@ export default {
           year: '2001',
           publisher: 'Дрофа',
           state: true,
-          book: 'Преступление и наказание'
+          book: 'Преступление и наказание',
+          date: '2024-05-16'
         },
         {
           id: '3',
@@ -248,7 +251,8 @@ export default {
           year: '2015',
           state: null,
           publisher: 'Санкт-Петербург',
-          book: 'Братья Карамазовы'
+          book: 'Братья Карамазовы',
+          date: '2024-05-17'
         },
         {
           id: '4',
@@ -259,7 +263,8 @@ export default {
           year: '2008',
           state: null,
           publisher: 'Москва',
-          book: 'Анна Каренина'
+          book: 'Анна Каренина',
+          date: '2024-05-18'
         }
       ],
 
@@ -309,13 +314,15 @@ export default {
   },
 
   watch: {
-    authorCount(newVal, oldVal) {
-      if (newVal > oldVal) {
-        for (let i = oldVal; i < newVal; i++) {
-          this.authors.push({ firstname: '', lastname: '', patronymic: '' });
+    'newBook.authorCount': function(newCount, oldCount) {
+      if (newCount > oldCount) {
+        // Добавляем пустых авторов
+        for (let i = oldCount; i < newCount; i++) {
+          this.newBook.authors.push({ firstname: '', lastname: '', patronymic: '' });
         }
       } else {
-        this.authors.splice(newVal);
+        // Удаляем лишних авторов
+        this.newBook.authors.splice(newCount);
       }
     }
   },
@@ -442,7 +449,7 @@ export default {
   max-width: 800px;
   border: #aebccb 1px solid;
   border-radius: 8px;
-  padding: 16px 16px 10px 36px;
+  padding: 16px 36px 10px 36px;
   background-color: #ffffff;
 }
 .section p {
