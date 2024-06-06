@@ -99,7 +99,7 @@ const { t } = useI18n({useScope: 'global'});
       </div>
       <div v-if="showEvents">
         <p>Добавление мероприятия</p>
-        <form @submit.prevent="submitFormEvents" style="">
+        <form @submit.prevent="submitFormEvents">
           <label for="title">Заголовок:</label><br>
           <input type="text" id="title" v-model="newEvent.title" class="input-group-text" required style="width: 500px; overflow-x: auto"><br>
 
