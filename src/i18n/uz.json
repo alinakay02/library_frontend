@@ -46,5 +46,9 @@
     "password": "Parol",
     "info": "Kamida 8 ta belgi va 1 ta raqam",
     "title2": "Ro'yxatdan o'tish"
+  },
+  "events": {
+    "all" : "Barcha tadbirlar",
+    "currMonth" : "Joriy oy uchun tadbirlar"
   }
 }

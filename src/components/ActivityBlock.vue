@@ -2,15 +2,17 @@
 import '@material/web/button/filled-button.js';
 import '@material/web/button/outlined-button.js';
 import '@material/web/checkbox/checkbox.js';
-import { useRouter } from 'vue-router';
+import {useI18n} from 'vue-i18n';
+const { t } = useI18n({useScope: 'global'});
 </script>
 
 <template>
-  <p class="section-title">Мероприятия на текущий месяц</p>
+<!--  Блок для вывода мероприятий на текущий месяц-->
+  <p class="section-title">{{ t('events.currMonth') }}</p>
   <div class="activ-list">
     <div v-for="event in currentMonthEvents" :key="event.id" class="activ-wrapper" >
       <div class="image">
-        <img :src="event.image" class="activity-image">
+        <img :src="event.photo" @error="handleImageError" class="activity-image">
       </div>
       <div class="activ-name">
         <div style="height: max-content" class="content">
@@ -22,11 +24,12 @@ import { useRouter } from 'vue-router';
       </div>
     </div>
   </div>
-  <p class="section-title">Все мероприятия</p>
+<!--  Блок для вывода всех мероприятий-->
+  <p class="section-title">{{ t('events.all') }}</p>
   <div class="activ-list">
     <div v-for="item in nonCurrentMonthEvents" :key="item.id" class="activ-wrapper">
       <div class="image">
-        <img :src="item.image" style="height: 10vw; width: 10vw; min-width: 100px; min-height: 100px" class="activity-image">
+        <img :src="item.photo" @error="handleImageError" style="height: 10vw; width: 10vw; min-width: 100px; min-height: 100px" class="activity-image">
       </div>
       <div class="activ-name">
         <div style="height: max-content" class="content">
@@ -46,7 +49,7 @@ import { useRouter } from 'vue-router';
         <input type="text" id="title" v-model="newEvent.title" required style="width: 500px; overflow-y: auto; text-align: left" class="input-group-text"><br>
 
         <label for="content">Текст мероприятия:</label><br>
-        <textarea id="content" v-model="newEvent.content" required style="height: 200px; width: 500px; resize: none; text-align: left" class="input-group-text"></textarea><br>
+        <textarea id="content" v-model="newEvent.event" required style="height: 200px; width: 500px; resize: none; text-align: left" class="input-group-text"></textarea><br>
 
         <label for="date">Дата:</label><br>
         <input type="date" id="date" v-model="newEvent.date" required class="input-group-text"><br>
@@ -60,51 +63,16 @@ import { useRouter } from 'vue-router';
         </div>
       </form>
     </div>
+
+  <p v-if="message" class="alert">{{ message }}</p>
 </template>
 
 <script>
-import emblem1 from '@/assets/activity1.png';
-import emblem2 from '@/assets/activity2.png';
-import emblem3 from '@/assets/img.png';
-import emblem4 from '@/assets/эмблема.jpg';
+import axios from "axios";
 export default {
   data() {
     return {
-      activity: [
-        {
-          id: 1,
-          title: 'Центральная Азия-2024: Интернет и информационно-библиотечные ресурсы в науке, образовании, культуре и бизнесе ',
-          date: '2024-05-17',
-          image: 'img/activity1.4449c52b.png',
-          content: 'Полное описание события 1'
-        },
-        {
-          id: 2,
-          title: '10 мая - День рождения выдающегося узбекского писателя Гафура Гуляма',
-          date: '2024-05-10',
-          image: emblem2,
-          content: 'Гафур Гулям (родился 10 мая 1903 г., умер 10 июля 1966 г.) - Великий узбекский писатель и поэт. \n' +
-              '\n' +
-              'Осиротев в девять лет от отца и в пятнадцать от матери, Гафур Гулам получил образование сначала в старой школе, а затем в русско-туземной школе. \n' +
-              '\n' +
-              'В автобиографической повести "шум бала" (1936) отчетливо изображено детство художника, жизнь Ташкента начала века.'
-        },
-        {
-          id: 3,
-          title: 'Неделя чтения с 21.06 по 28.06',
-          date: '2024-06-27',
-          image: emblem3,
-          content: 'Полное описание события 3'
-        },
-        {
-          id: 4,
-          title: '15 июня Управлением информации и массовых коммуникаций города Ташкента будет проведен семинар "Девиз книголюбов"',
-          date: '2024-06-15',
-          image: emblem4,
-          content: 'Полное описание события 3'
-        }
-      ],
-
+      activity: [],
       showEdit: false,
       newEvent: {
         title: '',
@@ -114,6 +82,7 @@ export default {
       },
       selectedEventId: null,
       admin: true,
+      message: '',
     };
   },
   computed: {
@@ -132,30 +101,45 @@ export default {
       });
     }
   },
+  mounted() {
+    this.fetchEvents();
+  },
   methods: {
+    // Метод для загрузки мероприятий
+    fetchEvents() {
+      axios.get('http://localhost:8084/events/getAll')
+          .then(response => {
+            this.activity = response.data; // Обновление данных мероприятий
+          })
+          .catch(error => console.error('Ошибка при загрузке мероприятий:', error));
+    },
+    // Метод для возврата пути изображения по умолчанию
+    handleImageError(event) {
+      event.target.src = require('@/assets/эмблема.jpg');
+    },
+    // Метод открытия отдельной страницы с конкретным меропритием
     openActivity(id) {
       this.$router.push({ name: 'activity-details', params: { id } });
     },
+    // Метод открытия диалога для редактирования мероприятия
     openEditDialog(event) {
       this.selectedEventId = event.id;
-      this.newEvent = {...event}; // Предзаполнение данных
+      this.newEvent = {...event};
       this.showEdit = true;
     },
+    // Метод редактирования мероприятия
     submitFormEvents() {
-      // Обработка сохранения данных
-      console.log('Saving data:', this.newEvent);
-      const index = this.activity.findIndex(event => event.id === this.selectedEventId);
-      if (index !== -1) {
-        // Обновляем существующий элемент в массиве
-        this.activity[index] = {...this.activity[index], ...this.newEvent};
-      } else {
-        console.log("No matching event found to update");
-      }
+      axios.put('http://localhost:8084/events/update', this.newEvent)
+          .then(response => {
+            this.fetchEvents();
+            this.showEdit = false;
+          })
       this.showEdit = false;
     },
+    // Метод для получения ссылки на изображение
     handleFileChange(event) {
       const file = event.target.files[0];
-      this.newEvent.image = URL.createObjectURL(file);
+      this.newEvent.photo = URL.createObjectURL(file);
     }
   }
 };

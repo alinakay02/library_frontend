@@ -35,7 +35,7 @@ const { t } = useI18n({useScope: 'global'});
         <button @click="savePassword" class="save-button">{{ t('profile.saveButton') }}</button>
       </div>
     </div>
-    <div v-if="admin" class="text">
+    <div v-if="role !== 'admin'" class="text">
       <p style="display: inline-block;" class="section-title">{{ t('profile.saved') }}
       <button @click="showSavedBooks= !showSavedBooks"
               style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
@@ -44,7 +44,7 @@ const { t } = useI18n({useScope: 'global'});
       </button>
       </p>
     </div>
-      <div v-if="showSavedBooks && admin" class="book-list">
+      <div v-if="showSavedBooks && role === 'admin'" class="book-list">
           <div v-for="book in savedBooks" :key="book.id" class="book">
             <img src="../assets/book-icon.png" alt="Book" class="book-image">
             <div class="book-details" style="width: 60%">
@@ -73,7 +73,7 @@ const { t } = useI18n({useScope: 'global'});
             </div>
           </div>
       </div>
-    <div v-if="admin" class="text">
+    <div v-if="role !== 'admin'" class="text">
       <p style="display: inline-block" class="section-title">Забронированные книги
       <button @click="showReservedBooks= !showReservedBooks"
               style="display: inline-block; background-color: #f9fcff; border: none; margin: 3px 16px 0 0; float: right; width: 10%; height: 24px">
@@ -101,7 +101,7 @@ const { t } = useI18n({useScope: 'global'});
       </div>
     </div>
 
-    <AdminPanel v-if="admin"/>
+    <AdminPanel v-if="role === 'admin'"/>
   </div>
 
   <div v-else class="not-authorized">
@@ -113,22 +113,27 @@ const { t } = useI18n({useScope: 'global'});
 
 <script>
 import AdminPanel from './AdminPanel.vue'; // Импорт компонента админ-панели
+import axios from "axios";
 export default {
   name: "PdfViewer",
   props: { docPath: String },
   components: {
     AdminPanel // Регистрация компонента админ-панели
   },
+
   data() {
     return {
       user: {
-        firstName: 'Алина',
-        lastName: 'Каюмова',
-        patronymic: 'Габдулахатовна',
-        cardId: 'GA9861112549',
-        username: 'username'
+        firstName: '',
+        lastName: '',
+        patronymic: '',
+        cardId: '',
+        username: '',
+        savedBooks: [],
+        orderBooks: [],
       },
-      savedBooks: [
+      savedBooks: [],
+      /*savedBooks: [
         {
           id: 1,
           title: 'Мастер и Маргарита',
@@ -179,12 +184,14 @@ export default {
           publisher: 'Дрофа',
           pdfUrl: 'https://drive.google.com/file/d/1w2-yAtfqUIBPrsIuxCRX1R5whCFHgyQM/view?usp=sharing',
         }
-      ],
+      ],*/
       showChangePasswordForm: false,
       newPassword: '',
       repeatPassword: '',
-      admin: true, // роль пользователя
-      authorized: true, // признак что пользователь авторизовался
+      role: 'admin',
+      //role: sessionStorage.getItem('role'), // роль пользователя
+      // Инициализация состояния авторизации на основе наличия userId в sessionStorage
+      authorized: sessionStorage.getItem('userId') !== null,
 
       // забронированные книги
       reservedBooks: [
@@ -217,6 +224,12 @@ export default {
     };
   },
   mounted() {
+    this.authorized = this.getSessionItem('userId') !== null;
+    if(this.authorized == null) {
+      this.$router.push({ path: '/login' });
+    }
+
+    this.fetchUserData();
 
   },
   computed: {
@@ -228,6 +241,40 @@ export default {
   },
 
   methods: {
+    fetchUserData() {
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        console.error('User ID is missing');
+        return;
+      }
+
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        console.error('Token is missing');
+        return;
+      }
+
+      axios.get(`http://localhost:8084/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+          .then(response => {
+            console.log(response.data)
+            this.user = {
+              firstName: response.data.name,
+              lastName: response.data.surname,
+              patronymic: response.data.patronymic,
+              cardId: response.data.cardId,
+              username: response.data.login,
+              savedBooks: response.data.savedBooks,
+              reservedBooks: response.data.orderBooks,
+            };
+          })
+          .catch(error => {
+            console.error('Error fetching user data:', error);
+          });
+    },
     // Логика сохранения пароля
     savePassword() {
 
@@ -264,8 +311,25 @@ export default {
     },
     // Выход из системы
     logout() {
-        this.$router.push({ path: '/login' });
-    }
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('role');
+      sessionStorage.removeItem('userId');
+      this.authorized = false;
+      this.$router.push({ path: '/login' });
+    },
+    getSessionItem(key) {
+      return sessionStorage.getItem(key);
+    },
+    checkAccess() {
+      const role = this.getSessionItem('role');
+      if (role === 'ROLE_ADMIN') {
+        // предоставление доступа к админскому интерфейсу
+      } else if (role === 'ROLE_USER') {
+        // предоставление доступа к пользовательскому интерфейсу
+      } else {
+        // нет доступа
+      }
+    },
   }
 };
 </script>

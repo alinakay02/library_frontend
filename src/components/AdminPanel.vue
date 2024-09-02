@@ -153,7 +153,10 @@ const { t } = useI18n({useScope: 'global'});
           <input type="number" v-model="newBook.year" required style="margin-bottom: 8px" class="inp"><br>
 
           <label for="publisher" >Издательство:</label><br>
-          <input type="text" v-model="newBook.publisher" style="margin-bottom: 24px" required class="inp"><br>
+          <input type="text" v-model="newBook.publisher" style="margin-bottom: 8px" required class="inp"><br>
+
+          <label for="pdf_path" >Ссылка:</label><br>
+          <input type="text" v-model="newBook.pdf_path" style="margin-bottom: 24px" required class="inp"><br>
 
           <div style="display: flex; justify-content: end">
             <button type="reset"
@@ -303,6 +306,7 @@ export default {
         genres: [''], // Массив для данных о жанрах
         publisher: '',
         year: null,
+        pdf_path: null,
       },
     };
   },
